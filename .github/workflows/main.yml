@@ -49,6 +49,7 @@ jobs:
         run: |
           cd guide
           cp -av ../guide-build/. .
+          echo "acton.guide" > CNAME
           git status
           git checkout --orphan gh-pages
           git add .
