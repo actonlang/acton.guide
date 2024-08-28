@@ -1,0 +1,34 @@
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Set vars for build only if not on main"
+        run: |
+          echo "PAGES_BRANCH=test-pages" >> $GITHUB_ENV
+        if: github.ref != 'refs/heads/main'
+      - name: "Set vars for deploy if on main"
+        run: |
+          echo "PAGES_BRANCH=gh-pages" >> $GITHUB_ENV
+        if: github.ref == 'refs/heads/main'
+      - name: 'Install cargo'
+        run: sudo apt-get install -qy cargo
+      - name: "Cache cargo"
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo
+          key: cargo
+      - name: 'Install mdbook-svgbob'
+        run: cargo install --locked mdbook mdbook-svgbob
+      - name: 'Checkout'
+        uses: actions/checkout@master
+      - name: 'Checkout acton repo'
+        uses: actions/checkout@master
+        with:
+          repository: 'actonlang/acton'
+          path: 'acton'
+          token: ${{ secrets.ACTBOT_PAT }}
