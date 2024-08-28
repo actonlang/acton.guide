@@ -26,9 +26,32 @@ jobs:
         run: cargo install --locked mdbook mdbook-svgbob
       - name: 'Checkout'
         uses: actions/checkout@master
+        with:
+          path: 'guide'
       - name: 'Checkout acton repo'
         uses: actions/checkout@master
         with:
           repository: 'actonlang/acton'
           path: 'acton'
           token: ${{ secrets.ACTBOT_PAT }}
+      - name: 'Build acton-by-example'
+        run: |
+          export PATH=/.cargo/bin:$PATH
+          cd acton/docs/acton-by-example
+          mdbook build -d ../../../guide-build
+      - name: "Configure git"
+        run: |
+          cd guide
+          git config --global --add safe.directory /__w/acton.guide
+          git config user.name "Web Bot"
+          git config user.email web@acton-lang.org
+      - name: "Create gh-pages branch from scratch"
+        run: |
+          cd guide
+          cp -av ../guide-build/. .
+          git status
+          git checkout --orphan gh-pages
+          git add .
+          git status
+          git commit -a -m "Publish web page"
+          git push --force origin gh-pages
