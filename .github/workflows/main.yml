@@ -34,10 +34,10 @@ jobs:
           repository: 'actonlang/acton'
           path: 'acton'
           token: ${{ secrets.ACTBOT_PAT }}
-      - name: 'Build acton-by-example'
+      - name: 'Build acton-guide'
         run: |
           export PATH=/.cargo/bin:$PATH
-          cd acton/docs/acton-by-example
+          cd acton/docs/acton-guide
           mdbook build -d ../../../guide-build
       - name: "Configure git"
         run: |
