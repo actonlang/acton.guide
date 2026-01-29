@@ -23,7 +23,7 @@ jobs:
           path: ~/.cargo
           key: cargo
       - name: 'Install mdbook'
-        run: cargo install --locked mdbook mdbook-admonish mdbook-tabs mdbook-svgbob
+        run: cargo install --locked mdbook@0.4.51 mdbook-admonish@1.20.0 mdbook-tabs@0.2.3 mdbook-svgbob@0.2.2
       - name: 'Checkout'
         uses: actions/checkout@master
         with:
