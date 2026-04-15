@@ -16,9 +16,11 @@ jobs:
           echo "PAGES_BRANCH=gh-pages" >> $GITHUB_ENV
         if: github.ref == 'refs/heads/main'
       - name: 'Install cargo'
-        run: sudo apt-get install -qy cargo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -qy cargo
       - name: "Cache cargo"
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cargo
           key: cargo
