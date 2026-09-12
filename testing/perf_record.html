@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Perf comparison - Acton Guide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../svgbob.css">
+        <link rel="stylesheet" href="../theme/tabs.css">
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/acton-theme.css">
+        <link rel="stylesheet" href="../theme/sbscode.css">
+        <link rel="stylesheet" href="../theme/detail-toggles.css">
+        <link rel="stylesheet" href="../theme/guide-links.css">
+        <link rel="stylesheet" href="../theme/content-width.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Acton Guide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="performance-comparisons"><a class="header" href="#performance-comparisons">Performance comparisons</a></h1>
+<p>Record a baseline with <code>acton test perf --record</code>. This writes measurements to
+<code>perf_data</code> in the project directory. Later performance runs compare with that
+file without changing it:</p>
+<pre><code class="language-sh">acton test perf --record
+# Make a change, then measure it against the baseline.
+acton test perf
+</code></pre>
+<p>Each measured test shows wall time, CPU measurements, allocation volume and
+process peak RSS. If the baseline contains a successful, compatible measurement
+of that test, the delta column shows each row's mean percentage change. The wall
+median comparison appears below the table. Process peak RSS is shown without a
+delta because it includes calibration and warmup, which can differ between runs.
+Positive values mean a higher measured value; negative values mean
+less. A change from zero to a nonzero value has no defined percentage and is
+shown as <code>from 0</code>.</p>
+<h2 id="matching-conditions"><a class="header" href="#matching-conditions">Matching conditions</a></h2>
+<p>Every comparison requires the same actual machine identity. Matching CPU models,
+architecture or OS version does not establish that two results came from the same
+machine. When identity is unavailable or different, the report shows the new
+measurement and explains why no delta is available. This applies to all metrics,
+including wall time, CPU time, allocation, hardware counts and the wall median.</p>
+<p>The test name, build settings, enabled capability tags, runtime worker count,
+scale, use of <code>t.loop()</code>, measurement version and GC policy must also match.
+Source code can change: that is what the comparison is intended to measure.
+The <code>--time</code> budget and number of measured runs can differ without invalidating
+an otherwise compatible comparison.
+Hardware counts additionally require the same backend and accounting scope;
+user-only counts cannot be compared with user-plus-kernel counts.</p>
+<p>Performance mode uses optimized builds by default. Keep explicit build options
+consistent between recording and comparison. Old recordings
+without machine identity or the required measurement metadata need to be recorded
+again before any deltas are shown.</p>
+<p>Same-machine comparisons can still be affected by other processes, thermal state
+and scheduling. Mandatory warmup does not remove those sources of variation.</p>
+<h2 id="reusing-scale"><a class="header" href="#reusing-scale">Reusing scale</a></h2>
+<p>For a test that uses <code>t.loop()</code>, a compatible baseline supplies the scale for
+the new run. The iterator yields that scale during warmup and measurement instead of
+calibrating a different workload. For example, after recording a list workload at
+scale 8, a slower version still processes the scale-8 input. It may complete fewer
+measured invocations or overrun the sampling target. It does not silently reduce
+the input to fit the target.</p>
+<p>Use <code>--scale N</code> to override the baseline with an exact positive integer. This
+skips calibration while preserving warmup and the independent <code>--time</code> budget.
+The same scale can still be compared with a compatible baseline; a different
+scale prevents a delta against the old scale. Use <code>--scale N --record</code> to record
+the chosen scale, or remove the recording to calibrate a fresh baseline.
+Dividing time by scale does not make different input sizes comparable, because
+workload costs can be nonlinear.</p>
+<h2 id="reading-uncertainty"><a class="header" href="#reading-uncertainty">Reading uncertainty</a></h2>
+<p>When both runs have at least two samples and include standard deviations, the
+report adds an approximate 95% Welch confidence interval for the difference in
+mean time per loop body, or per invocation for tests without a loop, with units
+shown beside each bound. Positive bounds indicate an increase; negative bounds
+indicate a decrease. Each table row's mean percentage
+change is colored only when its own interval excludes zero. The same check adds
+⚡ after the delta for an improvement or 💩 for a regression, including when
+color is disabled.
+IPC comparisons stay neutral: higher IPC alone does not establish an improvement.
+Compatible recordings without a standard deviation show a percentage with neutral
+coloring.
+The median's color shows direction without an uncertainty estimate.</p>
+<p>The interval allows different sample counts and variances. Each sample is one
+complete invocation's average, even if that invocation ran many loop bodies.
+It assumes independent samples and cannot account for correlations within a
+process, machine load or changes between runs. Treat it as a guide to measured
+variability and repeat benchmarks before attributing small changes to code.
+These samples come from one
+process per benchmark; they do not estimate variation between fresh processes.</p>
+<h2 id="updating-recordings"><a class="header" href="#updating-recordings">Updating recordings</a></h2>
+<p>Performance tests always run afresh, even when their source code is unchanged.
+Compilation still reuses unchanged build artifacts.</p>
+<p>Use <code>--record</code> again to update the baseline. The run compares against the previous
+values before replacing them. Filters such as <code>--module</code> and <code>--name</code> update only
+the selected successful tests; other measurements remain in the file. Failed,
+skipped and incomplete tests do not replace saved measurements. If no test
+produces a successful measurement, the file is left untouched. Invalid JSON is
+reported as an error so that a damaged baseline is not silently overwritten.</p>
+<p>The baseline matches tests by their stored module and test names; renamed tests
+or recordings using older module names need a new recording. Remove <code>perf_data</code>
+to start a new baseline without retaining old entries. <code>--record</code> is only
+supported in performance mode.</p>
+<p>See <a href="performance.html">Performance testing</a> for the meaning of each measurement.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../testing/stress.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../compilation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../testing/stress.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../compilation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/sbscode_copy.js"></script>
+        <script src="../theme/acton-theme.js"></script>
+        <script src="../theme/detail-toggles.js"></script>
+        <script src="../theme/guide-links.js"></script>
+
+
+    </div>
+    </body>
+</html>

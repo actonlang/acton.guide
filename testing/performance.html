@@ -1,0 +1,608 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Performance testing - Acton Guide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../svgbob.css">
+        <link rel="stylesheet" href="../theme/tabs.css">
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/acton-theme.css">
+        <link rel="stylesheet" href="../theme/sbscode.css">
+        <link rel="stylesheet" href="../theme/detail-toggles.css">
+        <link rel="stylesheet" href="../theme/guide-links.css">
+        <link rel="stylesheet" href="../theme/content-width.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Acton Guide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="performance-testing"><a class="header" href="#performance-testing">Performance testing</a></h1>
+<p>Performance mode uses the same test definitions as ordinary testing, runs one
+benchmark process at a time, and always takes fresh measurements. It builds
+optimized code by default. Tests run serially even when <code>--jobs</code> allows parallel
+compilation; each test retains the application's runtime worker threads, so actor
+work can still run concurrently.</p>
+<pre><code class="language-python">import testing
+
+def _test_sort(t: testing.SyncT):
+    source = list(range(1000, 0, -1))
+    result: ?list[int] = None
+    for scale in t.loop():
+        for i in range(scale):
+            result = sorted(source)
+    if result is not None:
+        assert result == list(range(1, 1001))
+</code></pre>
+<pre><code class="language-sh">acton test perf
+</code></pre>
+<p>The runner has a total budget of five seconds per benchmark, including
+calibration, warmup, setup and teardown. Use <code>--time</code> to change it:</p>
+<pre><code class="language-sh">acton test perf --time 10s
+</code></pre>
+<p>Durations accept units such as <code>5s</code> and <code>250ms</code>. The budget is a target: the runner
+finishes a whole invocation, so slow work can overrun it. A separate watchdog
+allows at least five minutes for a slow test; longer budgets extend it.
+Compilation is outside the benchmark budget.</p>
+<h2 id="studying-growth-with-input-size"><a class="header" href="#studying-growth-with-input-size">Studying growth with input size</a></h2>
+<p>Use <code>acton test scale</code> to explore how performance changes with input size:</p>
+<pre><code class="language-sh">acton test scale
+</code></pre>
+<p>No flags are required. The runner increases the workload and collects repeated
+measurements until the observed growth settles over a broad range, or a resource
+limit stops the study. There is no fixed number of points or target duration.
+To select a starting scale or change the resource ceilings:</p>
+<pre><code class="language-sh">acton test scale --name my_test \
+    --start-scale 1000 --max-memory 50% --max-time 2h
+</code></pre>
+<p>The study starts at scale 1 unless <code>--start-scale</code> is given. It normally doubles
+the scale between points, taking smaller steps when previous measurements predict
+that the next workload will approach the memory ceiling. Short and noisy points
+remain in the results. The default ceiling is 50% of physical memory, reduced by
+visible container limits and available memory headroom. <code>--max-memory</code> also
+accepts byte quantities such as <code>512MiB</code> or <code>4GiB</code>. The runner prints the actual
+ceiling before starting.</p>
+<p>Use <code>--start-scale</code> and <code>--end-scale</code> to choose the range of workload sizes:</p>
+<pre><code class="language-sh">acton test scale --name list_touch --start-scale 1000 --end-scale 100000
+</code></pre>
+<p>The runner starts at 1 unless given a different start, chooses intermediate
+sizes adaptively, and measures the exact endpoint before finishing. An explicit
+endpoint prevents statistical stopping rules from ending the study early.
+The end must be at least the start; equal values measure a single size.
+Without an endpoint, automatic exploration continues until growth settles or
+a resource limit intervenes. Time and memory ceilings apply to explicit ranges
+too, and a study that stops short reports that the endpoint was not reached.
+Completing the requested range does not establish stable growth: the report
+separately describes the available growth evidence, which can be inconclusive.</p>
+<p><code>--max-time</code> caps the entire study across all selected tests, including process
+startup, warmup, setup and teardown. It defaults to one hour; durations support
+<code>ms</code>, <code>s</code>, <code>m</code> and <code>h</code>. Compilation is outside this budget. The parent stops a
+running sample when the deadline expires. This is a safety ceiling, not the usual
+completion condition. <code>--time</code> and <code>--scale</code> belong to <code>acton test perf</code>; use
+<code>--max-time</code>, <code>--start-scale</code> and <code>--end-scale</code> with <code>acton test scale</code>.</p>
+<p>Scale must represent the workload dimension you want to investigate. For example,
+sorting <code>scale</code> elements tests growth with input size. Sorting the same small
+list <code>scale</code> times measures repetition. If scale represents the side length of
+a matrix, quadratic growth in its element count is expected. The runner can
+require <code>t.loop()</code>, but cannot verify what the test does with the yielded value.</p>
+<p>Each point starts with three samples. If mean wall time is at least 0.1ms and
+the estimated relative standard error exceeds 5%, the runner takes two more
+samples, then another two if needed, for at most seven. Relative standard error
+is the sample standard deviation divided by the square root of the sample count
+and by the mean. It guides sampling; it is not a confidence guarantee. A point
+below the timing floor advances to a larger scale instead of collecting more
+samples at the same size.</p>
+<p>Every sample uses a fresh process that runs one complete warmup invocation
+followed by one complete measured invocation. In both invocations, <code>t.loop()</code>
+yields the requested scale exactly once. The measured invocation has fresh setup
+and teardown, while retaining the process's warmed runtime and GC state. Three
+samples therefore cost six complete invocations. No extra loop repetitions fill
+a time budget. Natural GC remains enabled. Peak RSS includes startup, setup,
+warmup and teardown; it is process capacity, not a count of live application
+data. Allocation volume is recorded separately.</p>
+<p>The table shows mean wall time, sample ranges, time per unit of scale,
+allocated bytes, peak RSS and observed growth between successive sizes. An
+exponent near 1 means time grew roughly linearly over those sizes; near 2 means
+roughly quadratically.
+A growth estimate needs at least three samples at both sizes, mean times of at
+least 0.1ms and relative standard errors no greater than 5%.</p>
+<p>The runner reports stable growth after covering at least 1000 times the first
+reliable scale and finding five consecutive reliable growth estimates whose
+total spread is at most 0.25. Each step in that window must increase scale by at
+least 1.5 times. A bend or unreliable point breaks the window. The first reliable
+scale is rechecked every four sizes and before declaring stability. Each check
+uses three to seven samples under the same precision rule. It must remain
+reliable and its mean must stay within 20% of the original mean. Reference checks
+are separate observations, not additional curve samples. The study ends as
+inconclusive after three consecutive failed reference checks, or 20 consecutive
+sizes that remain too short or too variable. With <code>--end-scale</code>, the requested
+range determines completion. Periodic reference checks still run, and unstable
+measurements prevent a stable-growth claim without shortening the range.</p>
+<p>These are practical stopping heuristics. Stable growth describes the measured
+range; it does not prove an algorithm's asymptotic complexity or rule out a bend
+at a larger size. The result includes the covered scales, point and sample counts,
+and the recent scale range that supports its growth summary. A resource limit
+leaves a partial curve with the stopping reason.</p>
+<p>Each benchmark ends with three terminal charts: time, time divided by scale,
+and allocated bytes. Axes are logarithmic, except that an allocation chart
+containing zero uses a labelled linear vertical axis. Missing
+allocation data is omitted rather than shown as zero. Points show means, bars show
+sample ranges, and hollow points mark incomplete sampling at a size.
+If any timing at a size is zero because the operation is shorter than the clock
+resolution, that size is omitted from time charts but retained in the recording
+and allocation chart. Zero readings do not by themselves stop the study. Flat
+time/scale suggests roughly linear time over the measured range. The wall-time
+chart includes a dashed guide for time proportional to scale, anchored at the
+largest completed size. It is an illustration, not a fitted model or a complexity
+claim. Each chart highlights its latest point and shows its latest mean.
+Cyan, violet and pink distinguish time, time/scale and allocations;
+<code>--color never</code> and <code>NO_COLOR</code> select monochrome output. The summary counts curve samples
+separately from reference checks and identifies partial sizes. Kitty and
+Ghostty use inline graphics; other terminals, multiplexers and redirected output
+use Unicode plots. Very small terminals keep the table without charts. No
+external image viewer is needed, and drawing happens after measurement.</p>
+<p>Allocations measure the volume allocated inside the measured body, not retained
+structure size. Building a fixture before <code>t.loop()</code> excludes its allocation
+volume; peak RSS still includes it. The allocation chart can be rendered from
+older journals that contain allocation samples, without rerunning the study.</p>
+<p>While sampling, one terminal line shows the current scale and sample number.
+The target increases from three to five or seven when more measurements are
+needed. Completed measurements remain in the table. Redirected output prints
+one status line per size or reference check; <code>--no-progress</code> suppresses sampling
+status.</p>
+<p>Each benchmark writes its own JSON Lines journal under <code>out/perf_scaling/</code>.
+Filenames include the module, test name, UTC timestamp and a short implementation
+hash, for example
+<code>perf.dct._test_dct__2026-09-11T19-05-20.643370Z__a1b2c3d4e5f6.jsonl</code>.
+The header retains the full hash, timestamp, machine and build settings,
+compiler version and available Git revision and dirty status. A common run ID
+connects benchmarks selected by the same command. Renaming a file is harmless;
+the journal contents identify its benchmark.</p>
+<p>The implementation hash covers the test's typed Acton code and its tracked
+implementation dependencies. Changing the sampling settings does not change
+this hash. It does not cover external input files, handwritten C or the
+compiler/runtime binaries. Those can affect performance even when the benchmark
+hash stays the same. An unavailable hash is shown as <code>unknown</code> in the filename.</p>
+<p>To display an earlier recording with the same terminal charts:</p>
+<pre><code class="language-sh">acton test scale --report after.jsonl
+</code></pre>
+<p>Use the path printed by that run. Rendering only reads the journal, so it works
+outside the project without compiling or running tests. Completed samples from
+interrupted studies remain visible, with unfinished sizes marked as partial.</p>
+<p>Compare two recordings, or run the benchmark again against a recording:</p>
+<pre><code class="language-sh">acton test scale --report after.jsonl --compare before.jsonl
+acton test scale --compare before.jsonl
+</code></pre>
+<p>Each option takes one filename. <code>--compare</code> always supplies the baseline.
+The charts overlay at most two studies, with solid current curves and dashed
+baseline curves. Both retain their full recorded ranges and distinguish partial
+points. Comparison requires the same machine, build settings, input tags,
+measurement version, loop usage, GC policy and runtime worker count. Different
+implementation hashes are expected. Files without enough measurement identity
+can still be displayed individually.</p>
+<p>A live comparison selects the recorded benchmark before compilation, then
+remeasures its completed sizes in ascending order using fresh processes and the
+usual warmup and repeat policy. It finishes after those sizes rather than
+stopping early when a growth trend appears stable. <code>--start-scale</code> restricts the
+schedule to recorded sizes at or above that value. <code>--end-scale</code> includes recorded
+sizes up to the endpoint and requires a completed baseline point at that exact
+size. Choose a recorded size or run a new study to explore a different endpoint.
+Current time and memory ceilings still apply. An early
+stop retains the partial curve and reports which baseline sizes were not reached.
+Every run writes a new recording and leaves the baseline untouched.</p>
+<p>Older journals containing multiple benchmarks require <code>--module</code> and/or <code>--name</code>
+to select one for a live comparison. Two-file reports compare matching benchmark
+identities. Old timestamp-only filenames and journal formats remain readable.</p>
+<p>Every sample start and completed result is flushed immediately, so
+interruption leaves the completed work available and identifies the unfinished
+sample. <code>--json</code>
+streams these same events to standard output. The final event explains whether
+the study reached a time or memory limit, completed its selected tests, was
+interrupted, or encountered an error. No interrupted measurement is fitted as a
+completed point. The ordinary <code>perf_data</code> baseline is untouched; <code>--record</code> and
+snapshot updates are not supported during a scaling study.
+Each sample may emit at most 1MiB on each output stream. Exceeding this limit
+stops the study with an error so diagnostic output cannot exhaust the runner's
+memory during a long study. Raw diagnostics stay in the journal; terminal charts
+retain only timing and allocation samples for the current benchmark.
+Point events include <code>allocated_mean_bytes</code>, <code>allocated_min_bytes</code> and
+<code>allocated_max_bytes</code>, or <code>null</code> when allocation measurements are unavailable.
+The header records <code>start_scale</code> and the optional <code>end_scale</code>. The final event's
+<code>end_scale_reached</code> is true only when that exact endpoint completed sampling,
+false if the study stopped short, and null when no endpoint was requested.</p>
+<p>The memory guard monitors the benchmark process during execution and leaves a
+reserve for other work. Linux observes RSS and visible cgroup memory limits;
+macOS observes physical footprint and uses a conservative estimate of available
+pages. This is a best-effort guard, not a memory reservation or an OS-enforced
+allocation limit. A sudden allocation can exceed it before the next observation,
+and macOS can stop earlier than its apparent reclaimable memory would suggest.
+Memory in separate child processes is not included in the benchmark process's
+ceiling, although the machine's available headroom is still checked. Unavailable
+memory observations stop the study with an error. Supported platforms are Linux
+and macOS.</p>
+<p>Compare curves only on the same machine, at matching scales and with matching
+build, input and runtime settings. Cache effects, GC, input distribution and
+machine load all affect observed growth; the raw results retain timing and CPU
+counters for investigating these effects.</p>
+<h2 id="choosing-the-measured-work"><a class="header" href="#choosing-the-measured-work">Choosing the measured work</a></h2>
+<p>Use <code>for scale in t.loop():</code> on a <code>testing.SyncT</code>, <code>testing.AsyncT</code> or
+<code>testing.EnvT</code> context. The runner measures each loop body and excludes code before
+and after the loop from its timing and counter totals. In the example, building
+the input and checking the final result are excluded; sorting and allocating each
+sorted copy are measured. Ordinary testing runs the body once with scale 1.
+Tests without <code>t.loop()</code>, including tests without a context, measure their whole
+invocation.</p>
+<p>Read <code>t.scale()</code> before the loop to prepare an input of the requested size:</p>
+<pre><code class="language-python">def _test_lookup(t: testing.SyncT):
+    data = {i: i for i in range(t.scale())}
+    key = t.scale() - 1
+    for scale in t.loop():
+        assert data[key] == key
+</code></pre>
+<p>Scale stays fixed for the entire invocation and agrees with every value yielded
+by its loop. Calibration starts a fresh invocation for each candidate scale, so
+setup is rebuilt at the correct size. Warmup and measured invocations also run
+their own setup and teardown. Repeated bodies within one invocation share its
+setup; reset mutated state as needed. The getter is available on all three
+testing contexts and returns 1 in ordinary tests. Calling <code>t.scale()</code> alone does
+not opt into bracketed measurement; use <code>t.loop()</code> as well.</p>
+<p>Scale is a positive integer whose meaning the author defines. The sorting example
+runs on the same input <code>scale</code> times per body. It could instead control input size or the
+number of concurrent actors. Document that meaning. The runner tries increasing
+scales 1, 2, 4 and so on to find enough work for useful measurement. At the end of
+calibration, it chooses whichever of the last two scales ran closer to the target
+duration, then freezes that scale. This target is one tenth of the budget for
+the complete invocation, including setup and teardown, so preparation leaves
+room for repeated measurements. Reported operation timings still exclude setup
+and teardown. A compatible baseline supplies its recorded
+scale instead.
+The calibration points show observed growth; they do not establish an algorithm's
+complexity. The terminal abbreviates long curves to the first and last two
+points; JSON retains every point. Time divided by scale is not generally
+comparable across scales.</p>
+<p>Use <code>--scale</code> to choose an exact positive integer for tests that use <code>t.loop()</code>:</p>
+<pre><code class="language-sh">acton test perf --scale 8 --time 10s
+</code></pre>
+<p>An explicit scale overrides the baseline's scale and skips calibration. Warmup
+still runs, and <code>--time</code> independently controls the total budget. Without
+<code>--scale</code>, the runner uses a compatible baseline's scale or calibrates one.
+Tests that do not call <code>t.loop()</code> reject an explicit <code>--scale</code>.</p>
+<p>After preparation and warmup, a loop test aims for four complete measured
+invocations within the remaining budget. Each starts the test from the beginning,
+with fresh setup and teardown. Its loop repeats at the fixed scale while time
+remains. Tests without a loop repeat whole invocations until the budget ends.
+Expensive setup can leave fewer measured runs, or no measurement at all. In
+performance mode the loop may be empty if setup has already consumed its budget;
+teardown must handle that case. The report explains when there are no samples.
+Increase <code>--time</code> when needed.</p>
+<p>Use one <code>t.loop()</code> per invocation and allow it to finish normally in both ordinary
+and performance testing. An unfinished loop, including an early <code>break</code> or
+<code>return</code>, fails the test. For asynchronous work, wait for completion inside the
+body before the loop advances.
+Call <code>t.success()</code> after the loop and teardown have finished.</p>
+<p>The author owns input and reset behavior. Each loop body must perform the intended
+work again; repeatedly sorting an already sorted list measures a different
+workload. Setup allocations can still affect later GC, even though setup itself
+is excluded. Natural GC remains enabled throughout. Warmup does not guarantee
+stable caches, representative GC activity or freedom from scheduling noise.</p>
+<h2 id="measurements"><a class="header" href="#measurements">Measurements</a></h2>
+<p>Each benchmark has a table with <code>mean ± σ</code>, <code>min … max</code>, outliers and an optional
+baseline delta. Time and memory values use compact units such as µs, ms, KB and
+MB; memory prefixes are decimal (1 KB = 1000 bytes). Numeric and unit fields have
+fixed widths, so columns stay aligned across benchmarks. The default report is
+116 columns wide. Smaller terminals use compact layouts, omitting outliers,
+then the range, then the standard deviation to preserve the mean and delta.
+A dash means that statistic was not collected.</p>
+<p>Each complete measured invocation contributes one statistical sample. For a loop
+test, that sample is the invocation's measured total divided by its completed
+loop bodies. The table summarizes those run averages, at the selected scale.
+For a test without a loop, each sample covers one whole invocation. Memory
+averages and quartiles can contain fractions of a byte.</p>
+<p>The result includes:</p>
+<ul>
+<li><strong>Wall time:</strong> the primary measurement, including natural GC and waiting within
+the measured region.</li>
+<li><strong>σ:</strong> sample standard deviation of the row's measurements. Requires at least
+two measured runs; a constant measurement has zero deviation.</li>
+<li><strong>GC time:</strong> measured full GC time within the measured region. The GC counter has
+millisecond resolution. A zero can mean no collection occurred or that the
+counter was too coarse to record it. There are no forced collections between
+performance invocations.</li>
+<li><strong>CPU user, CPU system:</strong> CPU time spent in user code and the kernel across
+all threads in the test process. Unlike wall time, this excludes time waiting
+to be scheduled and can exceed wall time when threads work in parallel.</li>
+<li><strong>Instructions, cycles:</strong> hardware counts across all threads in the test
+process. Counts use decimal prefixes: K is one thousand and M is one million.
+These include GC and runtime work during the measurement, as do CPU times.
+They exclude child processes.</li>
+<li><strong>IPC:</strong> total measured instructions divided by total measured cycles for each
+run. The table summarizes these ratios. A higher IPC does not necessarily mean
+a faster program, so its comparison has neutral coloring and no improvement
+or regression icon.</li>
+<li><strong>Allocated:</strong> average bytes reported by the GC allocation counter
+in the measured region, averaged per loop body or whole invocation. This
+measures allocation volume, not peak memory usage.</li>
+<li><strong>Process peak RSS:</strong> peak resident memory since the test executable started, below the table.
+This includes startup, the runtime, all threads, the test harness, calibration,
+warmup and measurement. It is recorded before computing the final statistics
+and is omitted on platforms where it is unavailable. RSS minus GC heap size
+is not used as a performance or leak verdict. No baseline delta is shown,
+because calibration and warmup can differ between runs.
+Linux reads the executable's <code>VmHWM</code> rather than an inherited launcher peak.
+Older Linux recordings may include the launcher's footprint; replay cannot
+correct those recorded values.</li>
+<li><strong>Outliers:</strong> run averages outside the range from Q1 minus 1.5 times the
+interquartile range to Q3 plus 1.5 times that range. Quartiles use linear
+interpolation between sorted samples. Outliers remain in all statistics;
+they are counted separately for each row. When most GC samples are zero,
+nonzero collections can all count as outliers.</li>
+<li><strong>Scale, runs and loop iterations:</strong> the fixed workload scale, complete measured
+invocations and total completed bodies within those invocations. Many bodies in
+one run still contribute only one statistical sample.</li>
+<li><strong>Measured and elapsed time:</strong> accumulated wall time inside measured regions,
+and elapsed time across measured invocations including setup, teardown and
+harness work. Both exclude calibration and warmup. Whole-run elapsed time
+includes preparation.</li>
+</ul>
+<p>Very short tests are sensitive to measurement overhead and scheduling noise.
+Prefer workloads lasting at least a few milliseconds, using scale where useful,
+and repeat measurements before drawing conclusions from small percentage changes.
+Quartiles describe the run averages. They are not individual loop-body or request
+latency percentiles.</p>
+<p>CPU counters bracket each measured region, including a small amount of harness and
+counter-reading work. They do not isolate instructions spent on GC from other
+work. Wall time, CPU time and instruction counts provide different views of the
+same run; counters help explain variation but do not remove it.</p>
+<p>Linux uses <code>perf_event_open</code>, with thread inheritance requiring Linux 5.13 or
+later and matching build headers. It first requests user and kernel events,
+then tries user-only events if permissions prevent kernel counting. The report
+states which scope was collected. macOS uses the kernel's process instruction
+and cycle accounting through <code>proc_pid_rusage</code>, where the OS and hardware support
+it. Hardware counters are optional: denied permissions, unsupported hardware,
+failed reads or incomplete counter coverage omit those rows with an explanation.
+CPU times remain available independently. Linux samples with multiplexed events
+are omitted rather than scaled; a row is reported only when every measured run has
+a valid sample.</p>
+<p><code>--json</code> includes a <code>performance</code> object for each successful test. Its
+<code>measurements</code> contain the displayed quantities, iteration count, median and
+quartiles for every row. For example, <code>stdev_wall_duration</code>,
+<code>q1_mem_usage_delta</code> and <code>outlier_count_gc_duration</code> describe wall time spread,
+the first allocation quartile and GC outliers. JSON also retains the earlier
+diagnostic fields for time excluding GC, including its <code>outlier_count</code> key.
+Durations are in milliseconds and memory quantities are in bytes. <code>baseline</code>
+contains saved reference quantities when available. <code>mean_difference_ci95_ms</code>
+contains the comparison interval's <code>lower</code> and <code>upper</code> bounds for wall time, or
+<code>null</code> when the conditions differ or the
+necessary statistics are unavailable. <code>comparison_unavailable_reason</code> explains
+missing or incompatible baselines. Failed or skipped tests have <code>performance: null</code>.</p>
+<p>CPU durations are also in milliseconds. Instruction and cycle values are counts
+per loop body or whole invocation; IPC is a unitless ratio. For example,
+<code>avg_instructions</code>, <code>stdev_cycles</code> and <code>median_ipc</code> follow the same statistics
+naming scheme. <code>counter_info</code> records
+the backend, accounting scope, availability, CPU model, architecture and OS
+version. Missing counters are absent, while a measured zero remains zero.</p>
+<p>The <code>perf_info</code> object records measurement version, machine and build identity,
+scale, whether <code>loop</code> was used, worker count and <code>time_budget_ms</code>.
+<code>measurement_ms</code> sums timed body wall time; <code>measurement_duration_ms</code> includes
+setup and teardown across the measured invocations. Both are in milliseconds and
+exclude warmup. At the top level of <code>measurements</code>, <code>loop_iterations</code> counts
+completed measured bodies and <code>num_iterations</code> counts complete invocation samples.
+<code>calibration</code> retains each observed <code>{scale, wall_ms, invocation_ms}</code> point;
+<code>wall_ms</code> times the body and <code>invocation_ms</code> includes setup and teardown. These
+are sizing observations, separate from the measured samples.</p>
+<p>See <a href="perf_record.html">Performance comparisons</a> to record a baseline and compare
+later runs, or <a href="stress.html">Stress testing</a> for concurrency-focused tests.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../testing/flaky.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../testing/stress.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../testing/flaky.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../testing/stress.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/sbscode_copy.js"></script>
+        <script src="../theme/acton-theme.js"></script>
+        <script src="../theme/detail-toggles.js"></script>
+        <script src="../theme/guide-links.js"></script>
+
+
+    </div>
+    </body>
+</html>
