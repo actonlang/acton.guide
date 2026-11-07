@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Generics - Acton Guide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../svgbob.css">
+        <link rel="stylesheet" href="../theme/tabs.css">
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/acton-theme.css">
+        <link rel="stylesheet" href="../theme/sbscode.css">
+        <link rel="stylesheet" href="../theme/detail-toggles.css">
+        <link rel="stylesheet" href="../theme/guide-links.css">
+        <link rel="stylesheet" href="../theme/content-width.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Acton Guide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="generics"><a class="header" href="#generics">Generics</a></h1>
+<p>Generics let you write code that works for many types without throwing
+away type safety. They are how you describe a pattern once and reuse it
+for every concrete type that fits the pattern.</p>
+<h2 id="a-simple-generic-function"><a class="header" href="#a-simple-generic-function">A simple generic function</a></h2>
+<pre><code class="language-python">def first[A](items: list[A]) -&gt; A:
+    return items[0]
+
+actor main(env):
+    print(first([1, 2, 3]))
+    print(first(["a", "b", "c"]))
+    env.exit(0)
+</code></pre>
+<p><code>[A]</code> introduces a type variable named <code>A</code>. In this function:</p>
+<ul>
+<li><code>items</code> is a <code>list[A]</code></li>
+<li>the return value is also <code>A</code></li>
+<li>calling <code>first</code> on a <code>list[int]</code> returns an <code>int</code></li>
+<li>calling it on a <code>list[str]</code> returns a <code>str</code></li>
+<li>the compiler checks each call with the concrete type it sees there</li>
+</ul>
+<div class="beginner-content">
+<p>If the brackets feel abstract at first, read them as "for any type
+named A". Each call picks a concrete type for <code>A</code>, so
+<code>first([1, 2, 3])</code> uses <code>int</code> while
+<code>first(["a"])</code> uses <code>str</code>. That is how one
+definition stays reusable without giving up compile-time checking.</p>
+</div>
+<h2 id="constrained-generics"><a class="header" href="#constrained-generics">Constrained generics</a></h2>
+<p>Sometimes a generic function needs more than "any type". It may require
+that the type supports some operation or protocol.</p>
+<pre><code class="language-python">def bigger[A(Ord)](a: A, b: A) -&gt; A:
+    if a &gt; b:
+        return a
+    return b
+</code></pre>
+<p>Here, <code>A(Ord)</code> means <code>A</code> must implement the <code>Ord</code> protocol so the
+function can compare <code>a</code> and <code>b</code>. The constraint is part of the type
+information, not an implementation detail. Without it, the compiler
+would not know that <code>&gt;</code> is valid for <code>A</code>.</p>
+<div class="advanced-content">
+<p>Acton can often infer generic parameters and protocol constraints for
+you. Using <code>--sigs</code> is a good way to see what the compiler
+understood before you decide whether to write the generic signature
+explicitly. That matters when a helper starts being reused widely,
+because the inferred constraints determine both flexibility and dispatch
+behavior.</p>
+</div>
+<h2 id="generics-on-classes"><a class="header" href="#generics-on-classes">Generics on classes</a></h2>
+<p>Built-in collection types use the same syntax.</p>
+<pre><code class="language-python">class list[A] (object):
+    ...
+</code></pre>
+<p>That means a <code>list[int]</code> and a <code>list[str]</code> have the same generic shape
+but different element types.</p>
+<p>The same idea applies to your own classes and records. If a container or
+wrapper stores values without caring which concrete type they are, make
+that type parameter explicit.</p>
+<h2 id="when-to-add-constraints"><a class="header" href="#when-to-add-constraints">When to add constraints</a></h2>
+<p>Add a constraint when a type parameter must support a particular
+operation:</p>
+<ul>
+<li>comparison, as in <code>Ord</code></li>
+<li>equality or hashing, if the code depends on it</li>
+<li>a protocol, if the function calls methods from that protocol</li>
+</ul>
+<p>Do not add a constraint just because it looks formal. The compiler only
+needs the bounds that the body actually uses.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../types/explicit.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../types/effects.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../types/explicit.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../types/effects.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/sbscode_copy.js"></script>
+        <script src="../theme/acton-theme.js"></script>
+        <script src="../theme/detail-toggles.js"></script>
+        <script src="../theme/guide-links.js"></script>
+
+
+    </div>
+    </body>
+</html>

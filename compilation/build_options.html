@@ -1,0 +1,1059 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Application build options - Acton Guide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../svgbob.css">
+        <link rel="stylesheet" href="../theme/tabs.css">
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/acton-theme.css">
+        <link rel="stylesheet" href="../theme/sbscode.css">
+        <link rel="stylesheet" href="../theme/detail-toggles.css">
+        <link rel="stylesheet" href="../theme/guide-links.css">
+        <link rel="stylesheet" href="../theme/content-width.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Acton Guide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="application-build-options"><a class="header" href="#application-build-options">Application build options</a></h1>
+<p><code>build_options</code> is an optional dictionary of string names and string values in
+<code>Build.act</code>. It supplies options to the application's Zig build, with each entry
+passed as <code>-Dname=value</code>. Values are literal arguments, not Zig expressions.
+An unknown option or a value of the wrong type fails the build.</p>
+<p>The root application's options govern its build, including test executables.
+Options in a dependency's <code>Build.act</code> apply when building that dependency as a
+project itself; they do not override the consuming application's choices.
+Changing options rebuilds the affected artifacts and invalidates cached test
+results. Performance recordings retain the selected options so comparisons
+can measure configuration changes.</p>
+<p>Compiler options such as target, CPU, optimization, database support and
+threading remain controlled by their existing command-line flags. Their Zig
+option names (<code>target</code>, <code>cpu</code>, <code>ofmt</code>, <code>dynamic-linker</code>, <code>optimize</code>, <code>db</code>, <code>no_threads</code>,
+<code>cpedantic</code> and names beginning with <code>acton_</code>) are reserved and cannot appear in <code>build_options</code>.</p>
+<h2 id="c-allocator"><a class="header" href="#c-allocator">C allocator</a></h2>
+<p>Applications on Linux and macOS can replace ordinary C allocation with mimalloc:</p>
+<pre><code class="language-python">build_options = {
+    "malloc": "mimalloc",
+}
+</code></pre>
+<p>The default is <code>"libc"</code>. Removing the option or selecting <code>"libc"</code> restores the
+system allocator on the next build. Unsupported targets and unknown values
+fail the build. The choice applies to application and test executables.</p>
+<p>This replaces the C <code>malloc</code>/<code>calloc</code>/<code>realloc</code>/<code>free</code> family, including calls
+from native dependencies. It does not replace Boehm GC or change Acton object
+lifetimes. In particular, libuv's explicitly configured GC allocations stay
+scanned and uncollectable, because they retain references to Acton actors.
+Libraries with their own allocation hooks continue to use those hooks.</p>
+<p>Acton links one mimalloc object into each final executable, so applications
+do not need an additional shared allocator library at deployment. The selected
+allocator is active from process startup and cannot be changed mid-run.
+<code>MIMALLOC_VERBOSE=1</code> prints mimalloc's startup diagnostics when launching a
+mimalloc executable; leave it unset during timing runs.</p>
+<p>Compare identical application workloads with each setting, keeping compiler,
+optimization, worker count and GC settings fixed. XML parsing and TLS connection
+churn exercise ordinary C allocation. Acton collections and JSON conversions
+mostly use GC allocation and are useful controls. Measure throughput, latency
+and process RSS; the performance runner's allocated-byte count covers GC
+allocation, not all memory obtained through C <code>malloc</code>.</p>
+<h2 id="worker-threads"><a class="header" href="#worker-threads">Worker threads</a></h2>
+<p>The runtime starts one worker thread per CPU, and at least 4. By default it
+supports at most 255 worker threads, so a machine with more CPUs gets 255. An
+application can set a different limit:</p>
+<pre><code class="language-python">build_options = {
+    "max_wthreads": "1023",
+}
+</code></pre>
+<p>The value must be from 4 to 65535. On a machine with more CPUs than the limit,
+the runtime starts as many worker threads as the limit allows. A program run
+with <code>--rts-wthreads</code> above the limit exits with an error at startup.</p>
+<p>The runtime keeps the state of each worker thread in tables sized by the limit
+when the program is built. The limit is therefore shared by the application,
+its Acton dependencies and the standard library, and it cannot be changed by a
+running program. The tables take about 1 KiB of memory for each worker thread
+that the limit allows, whether or not the program starts it. Each running
+worker thread also has a libuv loop with file descriptors of its own, two on
+macOS. The runtime raises its <a href="../rts.html#open-files">open file limit</a> at
+startup, so only a low hard limit stops a program with many worker threads.
+Programs built with <code>--no-threads</code> ignore the option.</p>
+<h2 id="gc-defaults"><a class="header" href="#gc-defaults">GC defaults</a></h2>
+<p>Acton changes these defaults of BDWGC. Each change can be turned off, as
+its section below describes:</p>
+<div class="table-wrapper"><table><thead><tr><th>Behaviour</th><th>Turn off in <code>build_options</code></th><th>Turn off when starting the program</th></tr></thead><tbody>
+<tr><td><a href="#range-stealing">Range stealing</a> by parallel markers</td><td><code>"gc_mark_range_stealing": "false"</code></td><td>not possible</td></tr>
+<tr><td>A mark phase gets <a href="#gc-markers-per-mark-phase">one marker per 4 MiB</a> it is estimated to scan instead of all of them</td><td><code>"gc_bytes_per_marker": "0"</code></td><td><code>GC_BYTES_PER_MARKER=0</code></td></tr>
+<tr><td><a href="#gc-objects-moved-by-realloc">Old copies of objects moved by <code>GC_realloc</code></a> are left to the collector</td><td><code>"gc_realloc_no_free": "false"</code></td><td><code>GC_REALLOC_NO_FREE=0</code></td></tr>
+<tr><td>A new thread uses its own free lists <a href="#gc-thread-local-warm-up">without a warm-up</a></td><td><code>"gc_no_thread_local_warmup": "false"</code></td><td><code>GC_NO_THREAD_LOCAL_WARMUP=0</code></td></tr>
+<tr><td>A refill of a thread's free list takes <a href="#gc-thread-local-refills">up to 16 heap blocks</a> under the allocator lock instead of one</td><td><code>"gc_thread_local_refill_blocks": "1"</code></td><td><code>GC_TL_REFILL_MAX=1</code></td></tr>
+<tr><td>The global mark stack <a href="#initial-size">starts with 4194304 entries</a>, 1048576 on Windows, instead of 16384 with the default blocks</td><td><code>"gc_initial_mark_stack_size": "0"</code></td><td>not possible</td></tr>
+<tr><td>A collection starts after the program has allocated <a href="#gc-allocation-budget">2.5 times the live data</a>, pointer-free data included</td><td><code>"gc_alloc_budget_percent": "0"</code></td><td><code>GC_ALLOC_BUDGET_PERCENT=0</code></td></tr>
+<tr><td>The heap grows to the live data plus the budget at once, and the budget shrinks as the live data approaches <a href="#memory-limit">75% of the memory limit</a></td><td><code>"gc_heap_ceiling_percent": "0"</code></td><td><code>GC_HEAP_CEILING_PERCENT=0</code></td></tr>
+<tr><td>One automatic heap expansion may add up to <a href="#gc-heap-growth">a quarter of the heap</a> instead of 16 MiB</td><td><code>"gc_heap_growth_divisor": "0"</code></td><td><code>GC_HEAP_GROWTH_DIVISOR=0</code></td></tr>
+<tr><td>The heap is managed in <a href="#gc-heap-block-size">blocks of 16 KiB</a> instead of 4 KiB</td><td><code>"gc_block_size": "4096"</code></td><td>not possible</td></tr>
+<tr><td>Threads allocate objects of up to <a href="#gc-thread-local-allocation-size">2048 bytes</a> from their own free lists, instead of 384</td><td><code>"gc_thread_local_size_limit": "0"</code></td><td>not possible</td></tr>
+<tr><td>The collector keeps its marks as <a href="#gc-mark-layout">bits</a> instead of bytes</td><td><code>"gc_use_mark_bits": "false"</code></td><td>not possible</td></tr>
+<tr><td>Objects get <a href="#gc-object-end-padding">no padding byte</a> at their end, so a 16-byte object takes 16 bytes instead of 32</td><td><code>"gc_no_end_padding": "false"</code></td><td>not possible</td></tr>
+</tbody></table>
+</div>
+<h2 id="gc-mark-layout"><a class="header" href="#gc-mark-layout">GC mark layout</a></h2>
+<p>The collector keeps the marks of a heap block in the block's header, one mark
+per allocation granule (16 bytes on 64-bit targets). With parallel marking,
+BDWGC stores each mark in a byte. Acton stores the marks as bits by default.
+With 16 KiB blocks a header then takes 208 bytes instead of 1104, and the
+headers add 1.3% to the heap instead of 6.7%. Clearing the marks before each
+collection clears about an eighth as many bytes, and the walk over all headers
+at the start of the sweep steps about a fifth as far from one header to the
+next. Setting a mark bit takes an atomic operation, since parallel markers may
+set bits of the same word, where setting a mark byte is a plain store.</p>
+<p>On an M1 with 4 markers and on an AMD Ryzen 9 5950X (Linux) with 16, each
+workload ran 8 rounds with either layout: the <code>gc_heap</code> and <code>fleet</code> benchmarks,
+binarytrees, merkletrees, a build of 4 million records and fleetmgr loading
+10,000 and 50,000 devices. In the geometric mean over the rounds, mark bits used
+2 to 14% less CPU time than mark bytes, 2 to 10% less wall time and 3 to 6% less
+peak resident memory in each workload. The CPU time was lower in every round but
+one, of the <code>gc_heap</code> benchmark on the Ryzen. The wall time was lower in 7 or 8
+of the 8 rounds of each workload except fleetmgr loading 10,000 devices on the
+Ryzen, where it was lower in 4 rounds and the same in 4. World-stopped marking
+took 4 to 21% less time in the workloads whose peak resident memory was 390 MB
+or more with mark bytes. Loading 50,000 devices, fleetmgr used 14% less CPU time
+and 19% less time in world-stopped marking. Binarytrees and merkletrees, whose
+peak resident memory was 105 and 84 MB with mark bytes, gained the least: they
+took as long to mark with either layout, and gained only through the cheaper
+clearing and sweep start.</p>
+<p>Mark bytes, BDWGC's default with parallel marking, can be selected instead:</p>
+<pre><code class="language-python">build_options = {
+    "gc_use_mark_bits": "false",
+}
+</code></pre>
+<p>Without parallel marking, as on WebAssembly, BDWGC uses mark bits whatever
+<code>gc_use_mark_bits</code> says. <code>gc_mark_bit_per_object</code> indexes marks by object
+instead of allocation granule, which changes the work needed to find an
+object's mark. It defaults to <code>"false"</code>. The options are independent, so
+either can be set on its own. Measure on the application's workload before
+changing them.</p>
+<p>These are compile-time settings shared by the application, its Acton
+dependencies, the standard library and database support. They preserve
+parallel marking support and do not select incremental or generational
+collection. They cannot be changed by a running application.</p>
+<h2 id="gc-transparent-huge-pages"><a class="header" href="#gc-transparent-huge-pages">GC transparent huge pages</a></h2>
+<p>On Linux, an application can keep GC memory on ordinary pages:</p>
+<pre><code class="language-python">build_options = {
+    "gc_disable_thp": "true",
+}
+</code></pre>
+<p>This defaults to <code>"false"</code>, leaving the operating system's transparent huge
+page (THP) policy unchanged. When enabled, the runtime applies
+<code>MADV_NOHUGEPAGE</code> to memory obtained by the collector, starting with its initial
+allocation. It does not change the policy for the rest of the process. The
+setting persists when the collector releases physical pages and reuses them.</p>
+<p>Ordinary pages can reduce dirty-page tracking work for incremental or
+generational collection. Huge pages can improve address translation and
+memory access performance, so measure both choices for the application.
+This option does not enable incremental or generational collection itself.</p>
+<p>Enabling it for a non-Linux target fails the build. If the kernel rejects
+<code>MADV_NOHUGEPAGE</code>, the application exits with an error instead of continuing
+with an ineffective setting.</p>
+<h2 id="gc-dirty-tracking-backend"><a class="header" href="#gc-dirty-tracking-backend">GC dirty tracking backend</a></h2>
+<p>Linux applications can select the collector's dirty-page tracking backend:</p>
+<pre><code class="language-python">build_options = {
+    "gc_dirty_tracking_backend": "soft_dirty",
+}
+</code></pre>
+<p>The choices are <code>"auto"</code> (the default), <code>"soft_dirty"</code> and <code>"userfaultfd"</code>.
+Automatic selection preserves BDWGC's platform choices and fallback behavior.
+Explicit choices require a Linux GNU target. <code>userfaultfd</code> additionally requires
+x86, x86_64 or aarch64 and a glibc target of 2.34 or newer. Both explicit backends
+can therefore be compared using <code>--target x86_64-linux-gnu.2.36</code>.</p>
+<p>This is a build setting, shared by the application and its dependencies,
+including database support. It does not enable incremental or generational
+collection. For example, <code>GC_ENABLE_INCREMENTAL=1</code> enables that machinery when
+launching the executable; <code>GC_PAUSE_TIME_TARGET=999999</code> selects generational
+collection without a marking time limit.</p>
+<p>An explicit choice compiles out the <code>mprotect</code> fallback. If incremental
+collection is requested through <code>GC_ENABLE_INCREMENTAL</code> at startup and the
+selected backend cannot be activated, the runtime exits with an error. An
+ordinary collection run does not require the backend to be active. Native code
+that enables incremental collection later must check <code>GC_get_actual_vdb()</code>;
+this build option does not add a live backend-switching API.</p>
+<p>On macOS, arm64 builds track dirty pages with <code>mprotect</code>. x86_64 macOS builds
+leave it out, because incremental collection with it hangs under Rosetta 2;
+there, incremental and generational mode treat every heap page as dirty.</p>
+<h2 id="gc-page-hash-table-size"><a class="header" href="#gc-page-hash-table-size">GC page-hash table size</a></h2>
+<p>Applications with large heaps can experiment with a larger page-hash table:</p>
+<pre><code class="language-python">build_options = {
+    "gc_page_hash_table_log2": "23",
+}
+</code></pre>
+<p>The value is the base-two logarithm of the number of entries. Values from 1
+through 30 are accepted; <code>"0"</code> (the default) keeps the collector's usual size.
+This is a build setting and is shared by all application dependencies,
+including database support.</p>
+<p>In Acton's 64-bit large-heap configuration the default is 21: 256 KiB per table.
+With Acton's 16 KiB collector blocks, addresses 32 GiB apart share an entry (8
+GiB with 4 KiB blocks). Setting 23 uses 1 MiB per table and moves that address
+interval to 128 GiB. Larger tables can reduce unnecessary rescanning when clean
+pages share entries with dirty pages. They cost more memory and clearing/copying
+work. Several tables exist, including conservative-pointer blacklisting tables,
+so this also affects ordinary collection. It is independent of object mark-bit
+layout.</p>
+<p>Measure the application's workload before choosing a larger table. Increasing
+this value does not remove dirty-tracking faults or guarantee fewer collections.</p>
+<h2 id="gc-heap-growth"><a class="header" href="#gc-heap-growth">GC heap growth</a></h2>
+<p>Programs whose live data grows to gigabytes need the collector to expand the
+heap in larger steps. Acton sets the heap growth divisor to 4 by default:</p>
+<pre><code class="language-python">build_options = {
+    "gc_heap_growth_divisor": "4",
+}
+</code></pre>
+<p>Without it, one automatic heap expansion adds at most a fixed amount (16 MiB
+in Acton's configuration), and the collector runs a full collection before
+expanding again. A heap that grows from nothing to 4 GiB therefore needs
+hundreds of full collections, each marking all live data. With a divisor of
+<code>N</code>, one expansion may add up to the heap size divided by <code>N</code> when that is
+larger than the fixed amount, so the number of these collections grows with
+the logarithm of the heap size instead. Building a 1 GiB list of small
+objects took 78 collections with the fixed increment, 53 with 16 and 39 with
+8.</p>
+<p>The cost is a larger heap. On macOS, with 4 KiB blocks and an allocation budget
+of 67%, the divisor 4 made the fleetmgr load of 50,000 devices use 45% less CPU
+time and settle 30% sooner, at 32% more peak memory (4.1 to 5.5 GiB). The fleet
+load benchmark used 7% less CPU time at 63% more peak memory (316 MiB with the
+fixed increment). Larger divisors are not much cheaper in memory: 16 still cost
+28% more peak memory on fleetmgr. The free space divisor bounds each expansion,
+so divisors at or below it (3 by default) all behave alike. The setting has no
+effect until the heap is larger than <code>N</code> times the fixed amount (64 MiB for 4).</p>
+<p><code>"0"</code> keeps the fixed increment. Values must be non-negative integers. The
+<code>GC_HEAP_GROWTH_DIVISOR</code> environment variable overrides the build setting when
+the program starts; <code>0</code> there turns the scaling off. This is a build setting
+shared by the application and its dependencies, including database support.</p>
+<p>By default the heap is <a href="#memory-limit">sized by the memory limit</a> instead, and
+grows to its target in one expansion. The divisor applies where that sizing is
+off: with <code>gc_heap_ceiling_percent</code> or <code>gc_alloc_budget_percent</code> set to 0, in
+incremental and generational mode, and where no memory limit is known.</p>
+<h2 id="gc-allocation-budget"><a class="header" href="#gc-allocation-budget">GC allocation budget</a></h2>
+<p>BDWGC starts a collection after the program has allocated an amount derived
+from the previous collection: twice the pointer-containing live data, plus a
+quarter of the pointer-free live data, plus the roots (with thread stacks
+counted twice), all divided by the free space divisor (3 by default). A program
+whose live data is mostly strings, byte buffers or numbers therefore collects
+often compared with its heap size: pointer-free data counts an eighth as much as
+pointer-containing data. The allocation budget instead makes the amount a
+percentage of all live data and roots, like Go's <code>GOGC</code>. Acton uses a budget of
+250% by default, and the build setting changes it:</p>
+<pre><code class="language-python">build_options = {
+    "gc_alloc_budget_percent": "100",
+}
+</code></pre>
+<p>With 250%, the collector collects once the program has allocated two and a half
+times as much as survived the previous collection, so the heap holds about 3.5
+times the live data. As the live data approaches the memory of the machine or
+container, the amount shrinks, down to a tenth of the live data (see
+<a href="#memory-limit">Memory limit</a>). Larger values collect less often and use more
+memory, smaller values collect more often and use less. Pointer-free data, such
+as the contents of strings and byte buffers, counts like other data instead of
+an eighth as much. In incremental and generational mode the amount is halved,
+as with the default policy.</p>
+<p>A collection comes only when the allocator needs heap blocks that it does not
+have free. If the heap is smaller than the live data plus the budget, the
+collector grows it to that size in one expansion, and the next shortage of
+blocks collects. At that size, a shortage collects instead of growing the heap
+once the program has allocated half of the budget since the previous
+collection, and at least a tenth of the live data. Before that, or when a
+collection has not freed enough, the heap grows by at least a tenth of the live
+data. At that size part of the free space is in partly used blocks of other
+object sizes, in blocks held back for large objects, or in free runs of blocks
+too short for a request, so the free blocks can run out long before the budget
+is allocated. The wait for half of the budget keeps such cycles from ending
+early. A heap that grew larger earlier, for example while the program built its
+data, keeps its size, and a cycle then lasts until its free blocks run out.</p>
+<p>Where the heap is not sized by the memory limit (see
+<a href="#memory-limit">Memory limit</a>), the heap grows in steps instead. The collector
+then collects if the program has allocated the budget since the previous
+collection or if the heap has already grown once since then, and otherwise grows
+the heap by one step (see <code>gc_heap_growth_divisor</code>). While the live data grows,
+collections therefore follow the growth steps and come before the budget is
+used. With steady live data the heap settles at the first step whose free part
+covers the budget, so peak memory changes in steps of a quarter of the heap.</p>
+<p><code>"gc_heap_ceiling_percent": "0"</code> and <code>"gc_alloc_budget_percent": "200"</code> select
+200% with the heap growing in steps, the default before the heap was sized by
+the memory limit. The steps can overshoot the budget: with steady live data,
+the programs below allocated up to twice the budget between collections when
+the heap grew in steps. With 200% and the heap sized by the memory limit,
+programs measured earlier peaked at 0.61 to 0.89 times the memory of 200% with
+the heap growing in steps, for 0.78 to 1.22 times the CPU time, so the default
+is 250%. Without a memory limit that binds, 250% with the heap sized by the
+memory limit gave these medians of per-round ratios against 200% with the heap
+growing in steps, in interleaved rounds on an AMD Ryzen 9 5950X running Linux
+with 16 markers (8 rounds) and on an Apple M1 with 4 worker threads and 4
+markers (12 rounds), with mark bits:</p>
+<div class="table-wrapper"><table><thead><tr><th>Workload</th><th>Machine</th><th>CPU</th><th>Peak memory</th></tr></thead><tbody>
+<tr><td>Fleet manager, 50,000 devices</td><td>Ryzen</td><td>+2%</td><td>-5%</td></tr>
+<tr><td>Fleet manager, 10,000 devices</td><td>Ryzen</td><td>+4%</td><td>-15%</td></tr>
+<tr><td>GC heap build, 4 million records</td><td>Ryzen</td><td>-34%</td><td>-2%</td></tr>
+<tr><td>GC heap cold inventory, a million records</td><td>Ryzen</td><td>-19%</td><td>+17%</td></tr>
+<tr><td>GC heap cold inventory, a million records</td><td>M1</td><td>+5%</td><td>-2%</td></tr>
+<tr><td>GC heap updates, a million records</td><td>M1</td><td>+8%</td><td>-2%</td></tr>
+<tr><td>Fleet load, 10,000 devices</td><td>M1</td><td>+9%</td><td>-30%</td></tr>
+<tr><td>Binary trees</td><td>M1</td><td>+5%</td><td>+10%</td></tr>
+<tr><td>Merkle trees</td><td>M1</td><td>+1%</td><td>+26%</td></tr>
+</tbody></table>
+</div>
+<p>With the heap sized by the memory limit, the heap grows to about 3.5 times the
+live data in one expansion. With the heap growing in steps, the last step ended
+at 2.9 times the live data in the merkle trees benchmark and at 3.1 times in
+the cold inventory on the Ryzen, but at 3.7 times on the M1. The GC heap build
+grows its live data to 1.4 GiB. With the heap growing in steps it collects
+between the steps. With the heap sized by the memory limit, its heap grows to
+the target at once, and it collected a third as often. The binary trees
+benchmark keeps the heap it grows at start-up: 83 MiB with the heap sized by the
+memory limit, 75 MiB with the heap growing in steps.</p>
+<p>Under a memory limit, the amount allocated between collections shrinks as the
+live data approaches the ceiling, and the program collects more often instead
+of growing its heap past the limit. A program that kept 500 MiB of strings live
+while it allocated garbage strings ran in a systemd scope with <code>MemoryMax=1G</code> on
+the Ryzen. It finished at a peak of 713 MiB, in 1.19 times the CPU time it took
+without the limit. With 200% and the heap growing in steps, the kernel killed
+it for running out of memory. With 2000 MiB live and <code>MemoryMax=4G</code> it peaked at
+2671 MiB in 1.25 times the CPU time, and was killed with the heap growing in
+steps. The live data of this program grows until it ends. Without a limit, it
+peaked at 1.35 and 1.39 times the memory of 200% with the heap growing in
+steps, for 0.95 and 0.96 times the CPU time.</p>
+<p>The cost of a limit grows as the ceiling approaches the live data. With an
+explicit limit that put the ceiling at twice the live data, the GC heap cold
+inventory and build peaked at 0.80 to 0.82 of the ceiling, in 1.6 to 2.75 times
+the CPU time of 200% with the heap growing in steps without the limit, whose
+peak memory was 1.17 to 1.4 times the limit itself. With the ceiling at 1.5
+times the live data, they took 2.75 to 4.6 times the CPU time. The build stayed
+under the ceiling, and the cold inventory ended 9% above it, at 82% of the
+limit.</p>
+<p>A program that should use less memory can set a lower
+<a href="#memory-limit">memory limit</a>, or lower the budget, in <code>build_options</code> as above
+or, without a rebuild, with the <code>GC_ALLOC_BUDGET_PERCENT</code> environment variable
+when it starts, for example <code>GC_ALLOC_BUDGET_PERCENT=100</code>. A lower budget
+collects more often.</p>
+<p><code>"0"</code> selects the free space divisor policy, under which the heap grows in
+steps. The <code>GC_ALLOC_BUDGET_PERCENT</code> environment variable overrides the build
+setting when the program starts; <code>0</code> there selects the free space divisor
+policy. Under either policy, <code>GC_MIN_BYTES_ALLOCD</code> sets the smallest amount
+allocated between collections, in bytes with an optional <code>K</code>, <code>M</code> or <code>G</code>
+suffix. This is a build setting shared by the application and its
+dependencies, including database support.</p>
+<h3 id="memory-limit"><a class="header" href="#memory-limit">Memory limit</a></h3>
+<p>The collector sizes the heap by the memory limit of the program: the smallest
+of the physical memory, on Linux the memory limit of the program's cgroup
+(container), and a limit set for the program. The heap ceiling is 75% of the
+limit. With the live data <code>L</code> (as for the budget: the data that survived the
+previous collection, plus the roots and thread stacks) and the budget <code>B</code>, the
+amount allocated between collections is <code>B</code>% of <code>L</code>, but at most half the
+distance from <code>L</code> to the ceiling, and at least a tenth of <code>L</code>:</p>
+<pre><code class="language-text">allocated between collections = min(B% of L, max(10% of L, (ceiling - L) / 2))
+heap = L + allocated between collections
+</code></pre>
+<p>So the heap grows by the whole budget while that is a small part of the
+memory, and stays halfway between the live data and the ceiling as the live
+data approaches it. On a machine with 48 GiB of memory the ceiling is 36 GiB,
+and with the default budget of 250%:</p>
+<div class="table-wrapper"><table><thead><tr><th>Live data</th><th>Heap</th><th>Allocated between collections</th></tr></thead><tbody>
+<tr><td>1 GiB</td><td>3.5 GiB</td><td>2.5 GiB, 250% of the live data</td></tr>
+<tr><td>10 GiB</td><td>23 GiB</td><td>13 GiB, 130%</td></tr>
+<tr><td>20 GiB</td><td>28 GiB</td><td>8 GiB, 40%</td></tr>
+<tr><td>30 GiB</td><td>33 GiB</td><td>3 GiB, 10%</td></tr>
+</tbody></table>
+</div>
+<p>The whole budget applies up to 6 GiB of live data here (in general up to the
+ceiling times 50 / (<code>B</code> + 50)), and a tenth of the live data from 30 GiB (5/6 of
+the ceiling). Past about 33 GiB of live data the heap, 1.1 times the live data,
+is above the ceiling: the program then marks all its live data after every
+tenth of it that it allocates, which costs much CPU time, but the heap stays
+close to the live data. The ceiling is not a hard limit: when a collection does
+not free enough, the heap grows past it. The quarter of the limit above the
+ceiling is left for memory outside the collector's heap, such as C allocations
+and thread stacks, and for other programs.</p>
+<p>On Linux, the collector reads the cgroup memory limit when the program starts:
+<code>memory.max</code> (cgroup v2) or <code>memory.limit_in_bytes</code> (cgroup v1) of the
+program's cgroup and of each cgroup above it, under <code>/sys/fs/cgroup</code>, and takes
+the smallest. A program in a container with a memory limit, for example from
+<code>docker run --memory 2g</code> or a Kubernetes <code>resources.limits.memory</code> of <code>2Gi</code>,
+therefore has a heap ceiling of 1.5 GiB. The collector does not count
+<code>memory.high</code>: above it the kernel slows the cgroup down and reclaims its
+memory, but kills no process. To keep the heap below <code>memory.high</code>, set it as
+an explicit limit. The collector does not read swap limits either, and does
+not see a limit that changes after the program has started. Where it cannot
+read the limit of a container, for example when the cgroup file system is not
+mounted at <code>/sys/fs/cgroup</code>, set the limit explicitly. The collector finds the
+physical memory on Linux, macOS, Windows and the BSDs.</p>
+<p>An explicit limit is set in bytes:</p>
+<pre><code class="language-python">build_options = {
+    "gc_memory_limit": "4294967296",
+}
+</code></pre>
+<p>or, without a rebuild, with the <code>GC_MEMORY_LIMIT</code> environment variable when the
+program starts, in bytes with an optional <code>K</code>, <code>M</code> or <code>G</code> suffix:</p>
+<pre><code class="language-sh">GC_MEMORY_LIMIT=4G ./out/bin/myapp
+</code></pre>
+<p>The limit is the smallest of the physical memory, the cgroup limit and the
+explicit limit, so an explicit limit can only lower it. The environment
+variable replaces the build setting, and <code>GC_MEMORY_LIMIT=0</code> removes it. An
+explicit limit leaves memory to other programs on the same machine, or stands
+in for a container limit that the collector cannot read.</p>
+<p>The ceiling is a percentage of the limit, 75 by default:</p>
+<pre><code class="language-python">build_options = {
+    "gc_heap_ceiling_percent": "60",
+}
+</code></pre>
+<p>Values above 100 put the ceiling above the limit, for example on a machine
+with swap. <code>"0"</code> turns the sizing by the memory limit off: the heap grows in
+steps as described above, and the budget does not shrink near the limit. The
+<code>GC_HEAP_CEILING_PERCENT</code> environment variable overrides the build setting when
+the program starts. The sizing is also off with a budget of 0 and where no
+memory limit is known. In incremental and generational mode, the heap grows in
+steps, but the amount allocated between collections still shrinks near the
+ceiling.</p>
+<p><code>get_gc_info</code> reports the limit in effect as <code>memory_limit</code>, 0 if none is
+known, and the ceiling percentage as <code>heap_ceiling_percent</code>. With
+<code>GC_PRINT_STATS=1</code>, the collector logs the limit and where it came from when
+the program starts, and after each collection the amount allocated between
+collections, its percentage of the live data and the heap target. Both
+settings are build settings shared by the application and its dependencies,
+including database support.</p>
+<h2 id="gc-heap-block-size"><a class="header" href="#gc-heap-block-size">GC heap block size</a></h2>
+<p>The collector manages its heap in blocks. Each block holds objects of one size,
+and a thread refilling its free list of a size takes the allocator lock once
+per <a href="#gc-thread-local-refills">refill</a> of one block or more. Larger blocks mean
+fewer lock acquisitions and fewer blocks to visit in each collection. Acton uses
+16 KiB blocks by default, where BDWGC uses 4 KiB. The size can be changed:</p>
+<pre><code class="language-python">build_options = {
+    "gc_block_size": "4096",
+}
+</code></pre>
+<p>Valid values are powers of two from <code>"4096"</code> to <code>"65536"</code>; <code>"0"</code> also keeps
+the collector's 4 KiB blocks. Heap growth steps stay the same in bytes. On
+Apple silicon, 16 KiB is the page size.</p>
+<p>On an M1 with 8 worker threads, an allocation budget of 67% and the heap growth
+divisor at 4, compared with 4 KiB blocks, 16 KiB blocks took 12 to 31% of the
+CPU time off the <code>gc_heap</code> benchmark and 13 to 18% off the <code>fleet</code> load
+benchmark, which also ran in half the wall time. The fleetmgr load of 50,000
+devices used 37% less CPU time and settled 53% sooner. An M4 Pro and an M6 gave
+similar results, except that the <code>fleet</code> load benchmark used about the same CPU
+time on the M6, in half the wall time. Actor message passing used 21% more CPU
+time on the M1, in 8% less wall time, and 1 to 9% less on the other two.</p>
+<p>The cost is memory where heaps are small. Every program starts with about 1
+MiB more (a hello world program 3.5 to 4.6 MiB on the M1), the tests of the
+standard library peaked at 15% more each, and benchmarks with heaps of 6 to 20
+MiB at 23 to 42% more. Larger heaps changed less: the <code>gc_heap</code> benchmark's
+shrank by 1.5% and the <code>fleet</code> load benchmark's by 1 to 24%, and fleetmgr
+peaked at 12% more (5.5 to 6.1 GiB).</p>
+<p>Objects larger than half a block get whole blocks, so larger blocks round
+large objects up more coarsely: with 16 KiB blocks, a 9 KiB array occupies 16
+KiB, and with 64 KiB blocks a 40 KiB array occupies 64 KiB. A conservative
+false pointer into a free block also keeps more memory from reuse. When blocks
+are larger than pages, incremental and generational collection track dirty
+memory per block instead of per page. Measure memory use as well as time
+before choosing a size.</p>
+<p><code>"65536"</code> cannot be combined with <code>gc_mark_bit_per_object</code>. This is a build
+setting shared by the application and its dependencies, including database
+support.</p>
+<h2 id="gc-mark-stack"><a class="header" href="#gc-mark-stack">GC mark stack</a></h2>
+<p>The collector marks live objects by pushing references to be scanned onto a
+mark stack. With parallel marking, each marker thread works from a local stack
+and shares work through a global one.</p>
+<h3 id="range-stealing"><a class="header" href="#range-stealing">Range stealing</a></h3>
+<p>With range stealing, a marker takes work from the global mark stack by
+claiming a range of entries, sized to share the stack among the markers, with
+one atomic compare-and-swap, so that each entry is taken by one marker. It is
+on by default on targets with threads and can be turned off:</p>
+<pre><code class="language-python">build_options = {
+    "gc_mark_range_stealing": "false",
+}
+</code></pre>
+<p>Without it, a marker scans the global mark stack for a few entries at a time,
+without a lock. The markers rescan entries that others have already taken,
+and more than one marker can take the same entry and scan its object. This is
+slow when the stack holds many small entries, as in generational collection,
+where the markers start from the objects on dirty pages. Acton's collector
+marks generational collections with all its markers, where upstream BDWGC
+marks them on one thread. In measurements on a 32-thread Linux machine,
+without range stealing these collections took 1.25 times the wall time and
+2.5 times the CPU time of marking on one thread with 4 markers, and 1.9 to
+2.4 times the wall time and 18 to 27 times the CPU time with 16 markers; the
+longest pause was 2.6 to 6.6 times as long. With range stealing they took
+0.83 to 0.93 times the wall time of marking on one thread, and the longest
+pause was 0.5 to 0.8 times as long. Full collections were neither faster nor
+slower with it.</p>
+<p>No environment variable turns it off: the setting changes how the collector
+is compiled. On a target without threads the collector has no parallel
+markers, the default is <code>"false"</code>, and <code>"true"</code> fails the build.</p>
+<h3 id="initial-size"><a class="header" href="#initial-size">Initial size</a></h3>
+<p>When the global mark stack overflows while the collecting thread marks alone
+(from the roots, in a mark phase with one marker, or from the objects that are
+about to be finalized), the collector moves its entries to a larger stack and
+goes on, without dropping any. In a parallel mark phase with range stealing the
+global stack is a ring: the slots of entries that markers have taken are
+reused, so it overflows only when the entries waiting at one time do not fit. A
+marker that then finds no room drops its local stack, and after the phase the
+collector doubles the stack and scans the whole heap again for marked objects,
+on one thread, while normal marking runs on all marker threads. One such
+overflow can make a collection several times longer. BDWGC starts the stack
+with as many entries as a heap block has bytes, 16384 with Acton's default
+blocks; Acton starts it with 4194304 entries by default, and with 1048576 on
+Windows. The size can be changed:</p>
+<pre><code class="language-python">build_options = {
+    "gc_initial_mark_stack_size": "16777216",
+}
+</code></pre>
+<p>The value is a number of entries: a power of two of at least 4096 whose size
+fills whole heap blocks, which holds for every power of two from 4096 on
+64-bit targets. <code>"0"</code> gives BDWGC's initial size. Each entry takes 16 bytes on
+64-bit targets, so 4194304 entries take 64 MiB and 1048576 entries 16 MiB, for
+the life of the process. On Linux and macOS this is address space: a page of
+the stack becomes resident only when marking first writes it, although under
+strict overcommit (<code>vm.overcommit_memory=2</code>) Linux counts the whole stack
+against the commit limit. Windows commits the whole stack when the program
+starts, against the system's commit limit, which is why the default is smaller
+there. Each marker thread also has a local stack of as many entries as a heap
+block has bytes: 256 KiB with the default blocks. No environment variable
+changes the size: the setting changes how the collector is compiled.</p>
+<p>In a multi-actor service on a 32-thread Linux machine, 262144 entries
+removed the collections that overflowed the stack with initial heaps of 1
+and 4 GiB: the longest collection went from 1739 to 527 ms and from 2041 to
+484 ms, and the total collection time fell by 18% and 48%; CPU time and
+resident memory did not change. With a 32 GiB initial heap and about 6 GB
+of pointer data, 262144 entries still overflowed once while the service
+loaded its data: that collection took 10.6 to 12.6 seconds, 9 to 11 of
+them spent rescanning the heap on one thread, against 1.4 seconds for the
+other collections. With 1048576 entries and no other change, the overflow
+did not happen, and the load took 197 to 202 seconds instead of 211 to
+227.</p>
+<p>How many entries a collection uses depends on the shape of the live data and,
+with parallel markers, on how much work the markers pass through the global
+stack in one mark phase: the stack holds all of it, including the entries that
+markers have already taken. Programs with heaps of up to 3.4 GiB, the
+benchmarks among them, used at most 9001 entries. The service used up to
+290917 entries while it loaded 50,000 devices and up to 731573, 70% of
+1048576, while it loaded 100,000. With 262144 entries, 8 markers and the other
+settings at their defaults, it overflowed: an overflowing collection took 2.3
+to 4.2 seconds against 0.4 to 0.8 seconds for the others, and at 100,000
+devices the stack, with less than half the entries it needed, overflowed twice
+before it fit. 4194304 entries leave 5.7 times the service's deepest use. They
+cost nothing measurable but address space: against 1048576 entries, 4194304,
+16777216 and 67108864 entries added 48, 240 and 1008 MiB to the virtual size
+of a process, while peak resident memory, page faults, startup time and CPU
+time stayed within the noise, on Linux and on macOS.</p>
+<p>A larger stack moves the point where a program overflows it, but no size
+removes it. A linked list whose payload field comes before its link field
+needs one entry per node: a list of 1,000,000 such nodes used 995603 entries,
+and a list of 5,000,000 nodes, 455 MiB at its peak, overflowed 4194304
+entries. With the link field first, a list of 2,000,000 nodes used 59 entries.
+After an overflow the stack keeps its doubled size, and the pages that marking
+wrote stay resident, for the life of the process. A program with a very large
+heap can set a larger size; on Linux and macOS it costs address space until
+marking needs the entries.</p>
+<p>Both are build settings shared by the application and its dependencies,
+including database support.</p>
+<h2 id="gc-markers-per-mark-phase"><a class="header" href="#gc-markers-per-mark-phase">GC markers per mark phase</a></h2>
+<p>With parallel marking, the collector has up to 16 marker threads, by default
+one per processor (hardware thread) that is not an efficiency core, since
+efficiency cores mark the same work more slowly. At least 40% of all the
+processors, rounded up, are counted, though, with as many efficiency cores as
+that takes. An Apple M4 Pro, with 10 performance and 4 efficiency cores, has
+10 markers, and an Apple M1, with 4 of each, has 4. An Intel processor with 2
+two-thread performance cores and 10 efficiency cores has 6: its 4 processors
+that are not efficiency cores are fewer than 40% of its 14 processors (5.6),
+so 2 efficiency cores are counted too.</p>
+<p>The efficiency cores are those of the macOS performance levels named
+"Efficiency", on Linux, when an Intel hybrid processor lists processors in both
+<code>/sys/devices/cpu_core/cpus</code> and <code>/sys/devices/cpu_atom/cpus</code>, those not in the
+first list, and otherwise, as on arm64, the cores of the lowest capacity in
+<code>/sys/devices/system/cpu/cpu&lt;N&gt;/cpu_capacity</code> if it is less than 3/4 of the
+highest. On Linux, the collector counts every processor that <code>/proc/stat</code> lists,
+however long the file is. With <code>GC_PRINT_STATS</code> set, the collector logs the
+count when it leaves out efficiency cores, for example "Counting 10 of 14
+processors for markers: efficiency cores fully excluded". The <code>GC_MARKERS</code>
+environment variable sets the number of markers. <code>GC_NPROCS</code> sets the number of
+processors, and the default number of markers then follows it with no efficiency
+cores left out.</p>
+<p>BDWGC marks every mark phase with all its markers. Waking up and coordinating
+them costs more than they save when the phase has little to scan, and in a
+phase of medium size most of them add CPU time without shortening the pause
+much. Acton gives a mark phase one marker per 4 MiB it is estimated to scan,
+rounded up: a phase estimated at under 4 MiB is marked by the collecting
+thread alone, one estimated at 10 MiB by three markers, and a phase of a large
+heap by all of them. The estimate is the pointer-containing data found live by
+the previous collection, plus all that the program allocated since then, plus
+the roots and the thread stacks, so it also grows with the allocation budget
+and the initial heap size. The value can be changed:</p>
+<pre><code class="language-python">build_options = {
+    "gc_bytes_per_marker": "8388608",
+}
+</code></pre>
+<p>The value is a number of bytes that fits in the target's <code>size_t</code>. <code>"0"</code>
+gives every mark phase all the markers, as BDWGC does. The
+<code>GC_BYTES_PER_MARKER</code> environment variable overrides the setting when the
+program starts, and accepts a <code>k</code>, <code>M</code> or <code>G</code> suffix:</p>
+<pre><code class="language-sh">GC_BYTES_PER_MARKER=0 ./out/bin/myapp
+</code></pre>
+<p>On a Linux machine with an AMD Ryzen 9 5950X and 16 markers, with
+Acton's default 16 KiB blocks, heap growth divisor 4 and allocation
+budget 100, 4 MiB per marker against all the markers gave these medians
+of 12 interleaved rounds:</p>
+<div class="table-wrapper"><table><thead><tr><th>Workload</th><th>Mark estimate</th><th>Markers</th><th>CPU</th><th>Wall</th></tr></thead><tbody>
+<tr><td>GC heap cold inventory, 14,000 records, 8 workers</td><td>15 MiB</td><td>4</td><td>-34%</td><td>+1%</td></tr>
+<tr><td>Fleet load, 400 devices, 8 workers</td><td>19 MiB</td><td>5</td><td>-2%</td><td>+1%</td></tr>
+<tr><td>Actor message passing, 16 workers</td><td>7 MiB</td><td>2.5</td><td>0%</td><td>0%</td></tr>
+</tbody></table>
+</div>
+<p>The mark estimate is the median per phase and the markers the mean per phase.
+The wall times are within the noise: the cold inventory took more wall time
+than with all the markers in 7 of 12 rounds. Larger values save a little more
+CPU time and cost wall time: with 8 MiB the cold inventory used 38% less CPU
+time and 8% more wall time (more in 11 of 12 rounds), and with 16 MiB, where
+one thread marks it, 45% less CPU time and 16% more wall time. Fleet load with
+10,000 devices, fleet upgrade, cold inventory of a million records, a GC heap
+build of 4 million records and a fleet manager loading 10,000 devices marked
+with fewer markers only in their first collections, while the heap was small,
+and with 12 to 14 of the 16 on average. They changed by 1% or less, except the
+CPU time of the fleet upgrade, which was 3% lower, with single rounds from 7%
+lower to 8% higher. Peak memory did not depend on the setting.</p>
+<p>The CPU saving grows with the number of markers. On an Apple M4 Pro with 14
+markers, 4 KiB blocks, heap growth divisor 4, allocation budget 100 and 8
+workers, 4 MiB per marker took 46% of the CPU time and 10% of the wall time off
+the cold inventory in 6 rounds, 7% of the CPU time off the fleet load and 6%
+off the actor message passing. On an Apple M6 with 6 markers, 4 KiB blocks,
+heap growth divisor 4, allocation budget 67, 6 workers and a collector that
+refills thread-local free lists from up to 16 blocks, it took 5% of the CPU
+time off the cold inventory at the same wall time, and 8 MiB took 11% for 5%
+more wall time.</p>
+<p>The setting has no effect on a target without threads, where
+<code>get_gc_info</code> reports 0. This is a build setting shared by the application
+and its dependencies, including database support.</p>
+<h2 id="gc-object-end-padding"><a class="header" href="#gc-object-end-padding">GC object end padding</a></h2>
+<p>The collector treats a pointer into the interior of an object as a reference
+to it. It can add a byte to every allocation, so that a pointer just past the
+end of an object also keeps the object alive. With 16-byte size steps, the
+padding turns a 16-byte object into 32 bytes and a 32-byte object into 48.
+Acton does not add the padding by default. It can be turned on:</p>
+<pre><code class="language-python">build_options = {
+    "gc_no_end_padding": "false",
+}
+</code></pre>
+<p>Without padding, a pointer just past the end of an object points at the next
+object and keeps that one alive instead, so an object that is referenced only
+through such a pointer can be freed while still in use. Acton's runtime,
+standard library and generated code do not rely on the padding: the data of a
+str ends with a NUL inside its allocation, and no other object is kept alive
+through its end pointer alone. The data of bytes and bytearray has no
+terminator. Turn padding on if a C extension or C library in the application
+keeps an object alive through its end pointer alone.</p>
+<p>Without padding, nine of ten benchmark loads on x86_64 Linux and an M1 Mac
+took 6% to 24% less CPU time and peaked at 7% to 46% less resident memory, the
+<code>gc_heap</code> benchmark at 21% to 23% less. The tenth, binarytrees, took 1.2% more
+CPU time. Its objects are 24 bytes, and objects of 24 or 40 bytes take a 32-
+or 48-byte slot either way. With padding, the collector does not scan the last
+word of a slot, which holds at most 7 bytes of the object and so no pointer.
+Without padding it scans that word too.</p>
+<p>Peak memory can also rise. With the default allocation budget, the heap grows
+at once to 3.5 times the live data a collection finds, so its peak follows the
+live data at the last collection before it stops growing, and without padding
+collections come at other points of the program. The merkletrees benchmark,
+one of the nine at depth 17, took 18% less CPU time at depth 19 but peaked 22%
+higher: its heap stopped growing after a collection that found 128 MiB live,
+against 104 MiB with padding.</p>
+<p>The default is <code>"true"</code>. This is a build setting shared by the application and
+its dependencies, including database support.</p>
+<h2 id="gc-thread-local-allocation-size"><a class="header" href="#gc-thread-local-allocation-size">GC thread-local allocation size</a></h2>
+<p>Each thread allocates small objects from its own free lists, one list per size
+step (16 bytes on 64-bit targets), and takes the collector's allocator lock
+only to refill a list. Objects above a size limit do not use these lists:
+every allocation of one takes the lock. BDWGC's limit is 384 bytes on 64-bit
+targets. When several threads allocate many objects above it, they wait for
+the lock. With blocks of 16 KiB or more, Acton raises the limit to 2048 bytes
+by default. The limit can be changed:</p>
+<pre><code class="language-python">build_options = {
+    "gc_thread_local_size_limit": "4096",
+}
+</code></pre>
+<p>The value is an object size in bytes, including the end padding byte, so with
+padding on a limit of 2048 covers allocations of up to 2047 bytes. It must be
+a multiple of 16 and at most half the heap block size: 8192 with the default
+16 KiB blocks, 2048 with 4 KiB blocks. <code>"0"</code> keeps the collector's limit,
+which is also the default with blocks smaller than 16 KiB. A higher limit
+makes each thread's table of free lists larger (by about 3 KB at 2048 and 64
+KB at 32768), and each thread can hold partly used blocks of more sizes: with
+the default blocks, up to 4 MiB per thread at 2048 against 800 KiB at 384.</p>
+<p>On an M1 with 8 worker threads and 16 KiB blocks, 2048 bytes against 384 took 8
+to 9% of the CPU time off the <code>fleet</code> load benchmark and 13% off <code>pidigits</code>,
+which peaked at 43% more memory. The <code>gc_heap</code> benchmark and the fleetmgr load
+of 50,000 devices changed by less than 1.5%. Limits of 4096 and 8192 saved no
+more CPU time on the <code>fleet</code> load and <code>gc_heap</code> benchmarks, and <code>pidigits</code>
+peaked at 77% and 127% more memory than with 384. With 4 KiB blocks, 2048 bytes
+made the <code>fleet</code> load benchmark with 400 and 10,000 devices take 6 to 14% more
+wall time on the M1 and on an M6, so the default follows the block size.</p>
+<p>This is a build setting shared by the application and its dependencies,
+including database support.</p>
+<h2 id="gc-thread-local-refills"><a class="header" href="#gc-thread-local-refills">GC thread-local refills</a></h2>
+<p>A thread refills its free list of a size, when the list is empty, under the
+collector's allocator lock. In BDWGC one refill takes at most one heap block
+of objects, so a thread that allocates many small objects takes the lock
+often, and with many allocating threads the lock decides how fast they
+allocate. Acton lets one refill take up to 16 blocks under one acquisition of
+the lock, and the collector builds their free lists after releasing it. A free
+list gets one block at its first refill after a collection, and twice as many
+at each further refill before the next collection, up to 16, so a size that a
+thread allocates only now and then still takes one block at a time. The value
+can be changed:</p>
+<pre><code class="language-python">build_options = {
+    "gc_thread_local_refill_blocks": "4",
+}
+</code></pre>
+<p>The value is from 1 to 32. <code>"1"</code> takes one block per refill, as BDWGC does.
+The <code>GC_TL_REFILL_MAX</code> environment variable overrides the setting when the
+program starts:</p>
+<pre><code class="language-sh">GC_TL_REFILL_MAX=1 ./out/bin/myapp
+</code></pre>
+<p>The cost is memory. A thread can hold up to that many blocks of free objects on
+each of its free lists: 256 KiB per list with 16 of the default <a href="#gc-heap-block-size">16 KiB
+blocks</a>, and 64 KiB with 4 KiB blocks. With the default
+blocks and <a href="#gc-thread-local-allocation-size">size limit</a>, a thread that
+allocates much of every size between two collections could hold up to 64 MiB,
+16 times as much as with one block per refill. The objects on a thread's lists
+count as live data at every collection. The first refill by a thread after a
+collection empties its lists that it has not refilled since the collection
+before the latest one, so that the next collection reclaims their objects. A
+thread that stops allocating keeps its lists until it allocates again or exits.</p>
+<p>On an AMD Ryzen 9 5950X (16 cores, 32 threads, 16 markers) and an Apple M6
+(6 workers, 6 markers), with 16 KiB blocks, a thread-local size limit of 2048
+bytes, an allocation budget of 100%, a heap growth divisor of 4 and all
+markers in every mark phase, 16 blocks per refill gave these medians of 12
+interleaved rounds (fleet manager: 6) against 1 block per refill:</p>
+<div class="table-wrapper"><table><thead><tr><th>Workload</th><th>CPU</th><th>Wall</th></tr></thead><tbody>
+<tr><td>Fleet manager loading 50,000 devices, 8 workers, Ryzen</td><td>-2.4%</td><td>-4.3%</td></tr>
+<tr><td>Fleet load, 8 / 16 / 32 workers, Ryzen</td><td>+0.5 / -1.3 / -3.1%</td><td>-0.1 / +0.5 / +0.4%</td></tr>
+<tr><td>Fleet load, 6 workers, M6</td><td>+1.4%</td><td>+1.5%</td></tr>
+<tr><td>Fleet upgrade, 32 workers, Ryzen</td><td>-5.2%</td><td>-0.1%</td></tr>
+<tr><td>GC heap cold inventory, a million records, Ryzen / M6</td><td>-2.8 / -10.0%</td><td>-0.9 / -4.9%</td></tr>
+<tr><td>GC heap cold inventory, 14,000 records, M6</td><td>-14.8%</td><td>-8.0%</td></tr>
+<tr><td>GC heap build of 4 million records, Ryzen</td><td>-0.9%</td><td>-2.5%</td></tr>
+<tr><td>Scheduling pairs, Ryzen / M6</td><td>+0.1 / -0.4%</td><td>-0.1 / -1.2%</td></tr>
+<tr><td><code>binarytrees</code> 18, Ryzen / M6</td><td>-5.2 / -3.7%</td><td>-2.7 / -2.8%</td></tr>
+<tr><td><code>secp256k1</code>, Ryzen / M6</td><td>-14.8 / -6.4%</td><td>-6.2 / -5.8%</td></tr>
+</tbody></table>
+</div>
+<p>The fleet upgrade's wall time is fixed by the workload. With the fewest
+workers the fleet load collected 10 to 11% more often (8 workers on the
+Ryzen, 4 on the M6). Heaps of up to about 40 MB peaked 8 to 44% higher and
+collected 23 to 48% less often: the scheduling pairs, the fleet load of 400
+devices, the small cold inventory, <code>coro-prime-sieve</code>, <code>secp256k1</code> and
+<code>fasta</code>. On larger heaps the peak did not change beyond its spread between
+runs.</p>
+<p>The setting has no effect on a target without threads, where <code>get_gc_info</code>
+reports 0. This is a build setting shared by the application and its
+dependencies, including database support.</p>
+<h2 id="gc-thread-local-warm-up"><a class="header" href="#gc-thread-local-warm-up">GC thread-local warm-up</a></h2>
+<p>In BDWGC, a new thread does not use its own free list of a size until it has
+allocated about a heap block of objects of that size: until then, each of its
+allocations of that size takes the allocator lock. This keeps a thread that
+allocates only a few objects of a size from holding a list of them, but every
+new thread takes the lock once per object for each size it uses at first, and
+threads that start together contend for it. In a 16-thread service with a
+collector tuned to take the lock less often, and with the old copies of
+<a href="#gc-objects-moved-by-realloc">moved objects</a> left to the collector, these
+allocations were a quarter of the lock acquisitions of one phase of its work.</p>
+<p>By default, Acton skips this warm-up: a thread takes its own free list of a
+size at its first allocation of that size, which takes the lock once. The cost
+is memory: each thread can hold up to a heap block of free objects of every
+size it has allocated at least once, separately for objects with and without
+pointers. With the default blocks and <a href="#gc-thread-local-allocation-size">size limit</a>
+that is at most about 4 MiB per thread, and more with larger blocks or a
+higher limit. The warm-up can be turned back on:</p>
+<pre><code class="language-python">build_options = {
+    "gc_no_thread_local_warmup": "false",
+}
+</code></pre>
+<p>The <code>GC_NO_THREAD_LOCAL_WARMUP</code> environment variable overrides the build
+setting when the program starts: <code>0</code> turns the warm-up back on and <code>1</code> skips
+it, without rebuilding. On a target without threads there are no thread-local
+free lists, the default is <code>"false"</code>, and <code>"true"</code> fails the build.</p>
+<h2 id="gc-objects-moved-by-realloc"><a class="header" href="#gc-objects-moved-by-realloc">GC objects moved by realloc</a></h2>
+<p>When a list or a bytearray outgrows its storage, Acton's runtime doubles the
+capacity with <code>GC_realloc</code>. If the storage cannot grow in place, <code>GC_realloc</code>
+allocates a new object, copies the contents and, in BDWGC, frees the old copy
+with <code>GC_free</code>, which takes the collector's allocator lock. The new object
+usually comes from the thread's own free lists without the lock, so threads
+that grow lists take the lock for nearly every move only to free the old
+copy. In a 16-thread service whose collector was tuned to take the lock less
+often, these frees were 66% and 93% of the lock acquisitions in two phases of
+its work. Leaving the old copies to the collector cut the acquisitions 3 and
+15 times, with the same number of collections and the same peak memory.</p>
+<p>By default, Acton leaves a small old copy to the collector, which reclaims it
+like any other unreachable object. Old copies larger than half a heap block
+(8 KiB with the default blocks) are still freed at once: such a copy occupies
+whole heap blocks, which freeing returns to the heap right away, at the cost of
+one acquisition of the allocator lock. The behaviour can be turned off, so that
+every old copy is freed:</p>
+<pre><code class="language-python">build_options = {
+    "gc_realloc_no_free": "false",
+}
+</code></pre>
+<p>The <code>GC_REALLOC_NO_FREE</code> environment variable overrides the build setting
+when the program starts: <code>0</code> turns the behaviour off and <code>1</code> turns it on,
+without rebuilding.</p>
+<p>The cost is memory reuse: an old copy's memory is not reused before the next
+collection, and it counts toward the allocation that starts a collection. A
+program that grows many small lists can therefore collect more often. An
+Acton program on macOS (arm64) that keeps 4096 lists of up to 256 integers and
+keeps replacing them with new lists built by <code>append</code> collected 19% more often
+on one thread and used 11% more CPU time in 2% more wall time. With 32768
+lists, or with lists of up to 4096 integers, it collected 3% to 5% more often
+and used 3% to 8% more CPU time. With four actors building lists in parallel,
+it collected 13% more often but took 14% less wall time and 7% less CPU time:
+with fewer frees taking the allocator lock, its system time fell from 3.9 to
+2.2 seconds. In a C benchmark whose allocations are almost all such arrays,
+one thread collected up to 2.1 times as often and took up to 1.4 times the
+wall time. Measure a program that grows many small lists on one thread both
+ways.</p>
+<h2 id="inspecting-the-collector"><a class="header" href="#inspecting-the-collector">Inspecting the collector</a></h2>
+<p>An application can inspect its current collector configuration:</p>
+<pre><code class="language-python">import acton.rts
+
+actor main(env):
+    info = acton.rts.get_gc_info(env.syscap)
+    print(info.mode)
+    print(info.configured_backend)
+    print(info.backend)
+    env.exit(0)
+</code></pre>
+<p><code>configured_backend</code> is the build choice; <code>backend</code> is the active mechanism,
+using the same <code>soft_dirty</code> and <code>userfaultfd</code> names. In ordinary mode the active
+backend is <code>none</code>. <code>supported_backends</code> lists compiled capabilities, not a
+promise that the host kernel permits them.</p>
+<p>The result also reports <code>page_hash_table_log2</code>, <code>block_size</code>, <code>end_padding</code>,
+<code>thread_local_size_limit</code>, <code>no_thread_local_warmup</code>,
+<code>thread_local_refill_blocks</code>, <code>realloc_no_free</code>, available <code>markers</code> (including
+the initiating thread), <code>bytes_per_marker</code>, <code>mark_range_stealing</code>, <code>mark_bits</code>,
+<code>initial_mark_stack_size</code>, <code>pause_target_ms</code>, <code>free_space_divisor</code>,
+<code>full_frequency</code>, <code>heap_growth_divisor</code>, <code>alloc_budget_percent</code>,
+<code>memory_limit</code>, <code>heap_ceiling_percent</code>, <code>heap_size</code>, <code>free_bytes</code> and
+<code>unmapped_bytes</code>. The pause target is <code>None</code> for ordinary and unlimited
+generational collection, and is not a guaranteed maximum pause. Available
+markers need not participate in every incremental marking attempt. Settings
+that an environment variable can override are reported as in effect, after the
+override.</p>
+<p>Heap sizes are bytes; both <code>heap_size</code> and <code>free_bytes</code> include unmapped
+capacity. Their difference approximates occupied GC heap, not resident memory
+or deployment memory. The query takes a consistent snapshot and does not
+change collector policy or force a collection.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../compilation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../compilation/incremental.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../compilation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../compilation/incremental.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/sbscode_copy.js"></script>
+        <script src="../theme/acton-theme.js"></script>
+        <script src="../theme/detail-toggles.js"></script>
+        <script src="../theme/guide-links.js"></script>
+
+
+    </div>
+    </body>
+</html>
