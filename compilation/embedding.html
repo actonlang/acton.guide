@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Embedding files - Acton Guide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../svgbob.css">
+        <link rel="stylesheet" href="../theme/tabs.css">
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/acton-theme.css">
+        <link rel="stylesheet" href="../theme/sbscode.css">
+        <link rel="stylesheet" href="../theme/detail-toggles.css">
+        <link rel="stylesheet" href="../theme/guide-links.css">
+        <link rel="stylesheet" href="../theme/content-width.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Acton Guide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="embedding-files"><a class="header" href="#embedding-files">Embedding files</a></h1>
+<p><code>embed("path")</code> is an expression whose value is the content of a file, as
+<code>bytes</code>. The compiler takes the content when the program is built and puts
+it in the executable, so the program needs no file when it runs.</p>
+<p>A project <code>shop</code> has the files <code>data/banner.png</code> and <code>data/title.txt</code> beside
+its <code>src/</code> directory. The module <code>src/greeting.act</code> embeds both:</p>
+<pre><code class="language-python">banner: bytes = embed("data/banner.png")
+title: str = embed("data/title.txt").decode()
+
+actor main(env):
+    proc def __startup__():
+        print(title.strip(), len(banner))
+        env.exit(0)
+</code></pre>
+<p>The value is the bytes of the file as they are on disk. There is no form for
+text: <code>embed("data/title.txt").decode()</code> gives a <code>str</code>, and it checks and
+copies the content when it is evaluated.</p>
+<p><code>embed</code> can stand wherever an expression can stand, with two exceptions. It
+cannot be the default value of a parameter: give the content a name at the
+top level of the module and use the name. And it cannot be used at the prompt
+of <code>acton repl</code>: write it in a module.</p>
+<h2 id="the-path"><a class="header" href="#the-path">The path</a></h2>
+<p>The path is written in double quotes on one line and is read as it is
+written, with no escape sequence and no interpolation.</p>
+<p>The path counts from the project root, which is the directory that holds
+<code>Build.act</code>. In a module of a dependency it counts from the root of the
+dependency. In a file that is compiled without a project, as in
+<code>acton greeting.act</code>, it counts from the directory of that file. Such a file
+cannot embed a file when the absolute path of its directory has a double
+quote or a control character. The same holds for a project whose <code>out</code> is a
+symbolic link, with the path of the project root.</p>
+<p>A path follows these rules:</p>
+<ul>
+<li>It is relative and has <code>/</code> between its components. No component is empty,
+<code>.</code> or <code>..</code>.</li>
+<li>It has no backslash, no double quote, no brace and no control character.</li>
+<li>Its first component is not <code>out</code>, the directory that a build writes.</li>
+<li>It names a regular file of fewer than 2147483648 bytes (2 GiB). A symbolic
+link is followed, and only the content counts.</li>
+<li>Each component is spelled as its directory lists it. Where a file system
+takes <code>web/Index.html</code> for the file <code>web/index.html</code>, <code>embed</code> does not.</li>
+</ul>
+<p>A path that breaks a rule, or that names no file, is an error when the module
+is compiled.</p>
+<h2 id="the-files-of-a-directory"><a class="header" href="#the-files-of-a-directory">The files of a directory</a></h2>
+<p><code>embed</code> takes one file, and a path that names a directory is an error. The
+files of a directory get into a program through a
+<a href="derived_modules.html">derived module</a>, a module whose source a function returns
+while the build runs. The function <code>embed_files</code> of the module
+<code>std.build.derive</code> returns a module with one <code>embed</code> for each file below a
+directory.</p>
+<p>The project <code>shop</code> has the files <code>web/index.html</code> and <code>web/app.js</code>. Its
+<code>Build.act</code> has one entry in the table <code>derived_modules</code>:</p>
+<pre><code class="language-python">derived_modules = {
+    assets: (function=std.build.derive.embed_files, inputs=["web/"],
+             args=(strip="web"))
+}
+</code></pre>
+<p>The entry makes <code>assets</code> a module of the project. A build calls the function
+and writes the source that it returns to <code>out/derived/src/assets.act</code>:</p>
+<pre><code class="language-python"># Derived by std.build.derive.embed_files.
+
+files: dict[str, bytes] = {
+    "/app.js": embed("web/app.js"),
+    "/index.html": embed("web/index.html"),
+}
+</code></pre>
+<p>A module of the project imports <code>assets</code> and takes the content of a file from
+the dictionary <code>files</code>:</p>
+<pre><code class="language-python">import assets
+
+actor main(env):
+    proc def __startup__():
+        print(len(assets.files["/index.html"]))
+        env.exit(0)
+</code></pre>
+<p><code>inputs=["web/"]</code> names the files below <code>web/</code>, also those in the directories
+below it. The section <a href="derived_modules.html#input-paths">Input paths</a> lists the
+files that are left out, such as a file whose name starts with a dot. A backup
+file such as <code>web/app.js~</code> is not among them, so it is embedded. A directory
+without input files gives an empty <code>files</code>. A build stops when the directory
+is not there.</p>
+<p><code>strip</code> is a prefix that is left out of each key of <code>files</code>. With
+<code>strip="web"</code>, the content of <code>web/index.html</code> is
+<code>assets.files["/index.html"]</code>. Without <code>strip</code> it is
+<code>assets.files["web/index.html"]</code>. The prefix is compared with the start of a
+path character by character, so <code>strip="web/"</code> gives the key <code>index.html</code>. A
+build stops when the path of a file does not start with the prefix.</p>
+<p>A build also stops for a file whose path <code>embed</code> refuses. With a file
+<code>web/a{b}.txt</code>, whose name has braces, the message is:</p>
+<pre><code class="language-console">The function std.build.derive.embed_files of the entry assets of derived_modules in /home/user/shop/Build.act failed:
+ValueError: embed cannot name the file "web/a{b}.txt". A path of embed is relative, with / between its components. It has no empty component, no component . or .., no backslash, no double quote, no brace and no control character. Its first component is not out
+</code></pre>
+<h3 id="when-a-file-below-the-directory-changes"><a class="header" href="#when-a-file-below-the-directory-changes">When a file below the directory changes</a></h3>
+<p>The source of the module <code>assets</code> holds the path of each file and no content,
+and <code>embed_files</code> reads no file. The compiler takes the content of each file
+as it does for every <code>embed</code>.</p>
+<ul>
+<li>A file has new content: the build calls the function, which returns the
+same source, so the build does not write <code>out/derived/src/assets.act</code>. It
+compiles the module <code>assets</code> again because a file that the module embeds
+has new content. The section
+<a href="#when-an-embedded-file-changes">When an embedded file changes</a> says what
+else is compiled.</li>
+<li>A file is added or removed: the function returns source with one line more
+or one line fewer. The build writes <code>out/derived/src/assets.act</code> and
+compiles the module.</li>
+</ul>
+<p><code>acton build --watch</code> and <code>acton test --watch</code> build again in both cases.</p>
+<p>The language server calls no function. Until the next build it works with the
+source of <code>assets</code> as the last build wrote it: a file that was added is not in
+<code>files</code>, and a file that was removed is reported as missing at its line in
+<code>out/derived/src/assets.act</code>. That report goes when a build has written the
+module and the language server compiles it again, which an edit of a module
+that imports <code>assets</code> starts.</p>
+<h3 id="another-module-for-the-same-files"><a class="header" href="#another-module-for-the-same-files">Another module for the same files</a></h3>
+<p>The module that <code>embed_files</code> returns has a dictionary from path to content.
+A function of the project can return another module for the files of a
+directory, for example one that also has an entity tag for each file, which a
+web server sends in the header <code>ETag</code>. The module <code>std.build.derive</code> has two
+functions for the source that such a function returns:</p>
+<ul>
+<li><code>embed_call(path)</code> returns the expression <code>embed("path")</code> for a path. It
+raises <code>ValueError</code>, with the message above, for a path that <code>embed</code>
+refuses.</li>
+<li><code>str_literal(text)</code> returns a str literal whose value is <code>text</code>.</li>
+</ul>
+<p>The function <code>page_table</code> in <code>src/sitegen.act</code> uses both:</p>
+<pre><code class="language-python">import std.build.derive as derive
+
+def page_table(inputs: dict[str, derive.InputFile]) -&gt; str:
+    lines = ["table: dict[str, (body: bytes, etag: str)] = {{"]
+    for path, f in inputs.items():
+        etag = derive.str_literal('"' + f.sha256[:32] + '"')
+        lines.append("    " + derive.str_literal(path)
+                     + ": (body=" + derive.embed_call(path) + ", etag=" + etag + "),")
+    lines.append("}}")
+    return "\n".join(lines) + "\n"
+</code></pre>
+<p>A brace in a str literal is written twice, so the function writes <code>{{</code> for
+the brace that opens the dictionary. With the entry
+<code>pages: (function=sitegen.page_table, inputs=["web/"])</code>, a build writes this
+source for the module <code>pages</code>:</p>
+<pre><code class="language-python">table: dict[str, (body: bytes, etag: str)] = {
+    "web/app.js": (body=embed("web/app.js"), etag="\"d6447d6f631d17aaf8b0db0adf147064\""),
+    "web/index.html": (body=embed("web/index.html"), etag="\"b0693dc92f76e08bf1485b3dd9b514a2\""),
+}
+</code></pre>
+<p>The function takes the SHA-256 of each file from the description of the file
+and reads no file. When a file has new content, the line of that file
+changes, and the build writes the source of the module again. The page
+<a href="derived_modules.html">Derived modules</a> describes the function of an entry and
+the description of an input file.</p>
+<h2 id="when-an-embedded-file-changes"><a class="header" href="#when-an-embedded-file-changes">When an embedded file changes</a></h2>
+<p>A build looks at each embedded file. It reads a file only when what the file
+system records of the file has changed since the last build: its size, the
+times of its last changes, or which file is at the path. So a file that did
+not change costs a build no read, whatever its size. When a file has new
+content, the build compiles the module that embeds it again, and generates
+again the code of each module that uses a name whose value holds the content.
+<code>acton test</code> runs a test again when the test uses such a name. A file that is
+written again with the same content is read once and compiles nothing.</p>
+<p><code>acton build --watch</code> and <code>acton test --watch</code> build again when an embedded
+file is saved or removed, and when a file that was missing is created. This
+holds for the files that the modules of such a build embed: the modules of
+the project that the command builds, and those of its local dependencies.
+The build that follows looks at all these modules and compiles only what the
+new content changes. The watch of a file that is compiled without a project,
+as in <code>acton greeting.act --watch</code>, does the same for the files that this
+file embeds.</p>
+<p>In an editor, the language server reports an embedded file that is missing
+when it compiles the module. The report goes when the file is there and the
+module is compiled again, which an edit of the module or of a module that it
+imports starts.</p>
+<p>A build looks at an embedded file more than once: before it compiles a
+module, and again after the C compiler has read the file. When the file is
+written or removed between two looks, the build stops with a message such as
+<code>data/title.txt changed while the build ran. Run the build again</code>. The
+executable of such a build can hold other content than the module was compiled
+with.</p>
+<p>A build with <code>--only-build</code> compiles no module. When an embedded file has
+changed since its module was compiled, such a build stops with a message such
+as <code>data/title.txt changed since its module was compiled. Run the build without --only-build</code>.</p>
+<p>The module that embeds a file is type checked again each time the content of
+the file changes. So a name that holds a large file, or a file that changes
+often, belongs in a small module of its own.</p>
+<p>Keep an embedded file outside <code>src/</code>, for example in a directory <code>data/</code> or
+<code>web/</code> beside it. For a module with an <code>.ext.c</code> file that names an included
+file through a macro, a build reads every file under <code>src/</code> that is no Acton
+source, so a large file there slows down each build.</p>
+<h2 id="in-the-executable"><a class="header" href="#in-the-executable">In the executable</a></h2>
+<p>The content of an embedded file is read-only data of the executable. Nothing
+is read or copied when the program starts: the operating system loads a part
+of the content when the program first reads it. Evaluating <code>embed</code> allocates
+the header of a <code>bytes</code> value and no content.</p>
+<p>A file that two modules embed is in the executable twice. Every executable
+that holds the module holds the file, also the executable of a test module
+that imports it.</p>
+<p>The files that one executable embeds should together stay below 1.9 GiB. Above
+that, an executable may not link, and for macOS and Windows it may link and
+then not start.</p>
+<h2 id="the-word-embed"><a class="header" href="#the-word-embed">The word embed</a></h2>
+<p><code>embed</code> is a reserved word. It cannot name a variable, a function, a
+parameter or a class, and it cannot be the first part of a module name. An
+attribute or a later part of a module name with this spelling is written in
+quotes, as in <code>page."embed"</code>.</p>
+<p>A module file <code>src/embed.act</code> and the modules below a directory <code>src/embed/</code>
+are compiled, but no module of the same project can import them, since the
+first part of a module name cannot be written in quotes.</p>
+<p>A project cannot have both <code>src/tool.act</code> and <code>src/tool.embed.act</code>. The
+generated file for the content that a module <code>tool</code> embeds is <code>tool.embed.c</code>,
+and the generated C file of the module of <code>src/tool.embed.act</code> has the same
+path. A build of such a project stops with a message that names both files.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../compilation/incremental.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../compilation/derived_modules.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../compilation/incremental.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../compilation/derived_modules.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/sbscode_copy.js"></script>
+        <script src="../theme/acton-theme.js"></script>
+        <script src="../theme/detail-toggles.js"></script>
+        <script src="../theme/guide-links.js"></script>
+
+
+    </div>
+    </body>
+</html>

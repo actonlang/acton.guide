@@ -1,0 +1,675 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Derived modules - Acton Guide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../svgbob.css">
+        <link rel="stylesheet" href="../theme/tabs.css">
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/acton-theme.css">
+        <link rel="stylesheet" href="../theme/sbscode.css">
+        <link rel="stylesheet" href="../theme/detail-toggles.css">
+        <link rel="stylesheet" href="../theme/guide-links.css">
+        <link rel="stylesheet" href="../theme/content-width.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Acton Guide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="derived-modules"><a class="header" href="#derived-modules">Derived modules</a></h1>
+<p>A derived module is a module of a project that has no file under <code>src/</code>. An
+Acton function returns its source, and <code>acton build</code> calls the function
+when the module is out of date. Other modules import a derived module like
+any other module.</p>
+<p>Use a derived module for source that follows from other files: classes that
+are generated from a schema, tables that are computed from data files, or
+files that are embedded in the program.</p>
+<h2 id="the-table-in-buildact"><a class="header" href="#the-table-in-buildact">The table in Build.act</a></h2>
+<p>The table <code>derived_modules</code> in <code>Build.act</code> lists the derived modules of a
+project. The table below has one entry, for the module <code>schema</code>:</p>
+<pre><code class="language-python">derived_modules = {
+    schema: (
+        function=gen.schema,
+        inputs=["data/schema.txt"],
+        args=(prefix="S")
+    )
+}
+</code></pre>
+<ul>
+<li>The name to the left of the colon is the name of the module, written as
+an <code>import</code> statement writes it. <code>schema</code> is the module that
+<code>src/schema.act</code> would be, and <code>model.schema</code> the module that
+<code>src/model/schema.act</code> would be. A name can also end with <code>.*</code> and stand
+for every module below it: see
+<a href="#every-module-below-a-name">Every module below a name</a>.</li>
+<li><code>function</code> is a module name followed by the name of a function in that
+module. The module name is written as an <code>import</code> statement in the
+project writes it. <code>gen.schema</code> is the function <code>schema</code> in the module
+<code>gen</code> of the project. <code>tools.gen.schema</code> is the function <code>schema</code> in the
+module <code>gen</code> of the dependency <code>tools</code>. <code>std.build.derive.embed_files</code> is
+the function <code>embed_files</code> in the module <code>std.build.derive</code> of the
+standard library. The function of an entry cannot be in a derived module
+of the same project.</li>
+<li><code>inputs</code> lists the input files of the function, as paths relative to
+the project root. A path names a file or a directory inside the project,
+and a directory stands for the files below it:
+<code>inputs=["data/schema.txt", "data/types/"]</code> names the file
+<code>data/schema.txt</code> and the files below <code>data/types/</code>. The section
+<a href="#input-paths">Input paths</a> has the rules. <code>inputs</code> can be left out.</li>
+<li><code>args</code> holds arguments for the function, written as the keyword
+arguments of a call, with commas between them. A name is the name of
+a parameter of the function. A value is a literal: a string, a number,
+<code>True</code>, <code>False</code>, <code>None</code>, a list, or a dictionary with strings as keys.
+The function gets the keys of a dictionary in sorted order, not in the
+order in which they are written. A number whose fraction is zero is
+passed as an integer: <code>2.0</code> is passed as <code>2</code>. A parameter of type
+<code>float</code> takes an integer too. <code>args</code> can be left out.</li>
+</ul>
+<p>The module name and the value of <code>function</code> are written as names, without
+quotes. Each path in <code>inputs</code> is a string.</p>
+<p>A module cannot be both a derived module and a file under <code>src/</code>, and a
+name that ends with <code>.*</code> has no <code>.act</code> file under <code>src/</code> below it. The
+table cannot name a module twice. With a dependency named <code>tools</code>, the
+table cannot name the module <code>tools</code> or a module such as <code>tools.schema</code>:
+an <code>import</code> statement in the project takes these names for modules of
+the dependency. A build stops in each of these cases.</p>
+<h2 id="input-paths"><a class="header" href="#input-paths">Input paths</a></h2>
+<p>A path in <code>inputs</code> is written with <code>/</code> between its components. A build
+stops with a message for a path that breaks one of these rules:</p>
+<ul>
+<li>The path is relative and has no <code>.</code> or <code>..</code> component, so it stays
+inside the project.</li>
+<li>Its first component is not <code>out</code>. A build writes the directory <code>out/</code>,
+so a file there is no input of a build.</li>
+<li>It names a file or a directory.</li>
+<li>Each component is spelled as its directory lists it. With a directory
+<code>data</code> in the project, <code>inputs=["Data/"]</code> is an error, also on a file
+system that finds <code>data</code> under the name <code>Data</code>. The same <code>Build.act</code>
+then builds on every file system.</li>
+</ul>
+<p>A path that names a directory stands for every file below it, in the
+directories below it too, with three exceptions:</p>
+<ul>
+<li>a file whose name starts with a dot, such as <code>.DS_Store</code>,</li>
+<li>a file below a directory whose name starts with a dot, such as <code>.git/</code>,</li>
+<li>a <code>--tydb</code> copy. A build with <code>--tydb</code> writes a copy of the interface
+of a module beside its source file, as a directory with the extension
+<code>.tydb</code>. A file in a directory with that extension, and a file with
+that extension, is no input file.</li>
+</ul>
+<p>A file of these three kinds is no input file: the function does not get
+it, and a change to it runs no function. Every other file is an input
+file, also a backup file such as <code>app.js~</code>. A path that is written in
+<code>inputs</code> is taken as it is written: <code>inputs=["web/.well-known/"]</code> names
+the files below <code>web/.well-known/</code>.</p>
+<p>A build stops with a message when an input file cannot be read, when it
+is not a regular file, or when its name has bytes that are not text in
+the encoding of the locale. Below a directory, a symbolic link that names
+no file is an input file that cannot be read.</p>
+<h2 id="the-function"><a class="header" href="#the-function">The function</a></h2>
+<p>The function of the entry above is an ordinary function in <code>src/gen.act</code>:</p>
+<pre><code class="language-python">import std.build.derive as derive
+
+def schema(inputs: dict[str, derive.InputFile], prefix: str) -&gt; str:
+    lines = []
+    for name in inputs["data/schema.txt"].read().decode().splitlines():
+        lines.append("class " + prefix + name + "(object):")
+        lines.append("    def __init__(self):")
+        lines.append('        self.kind = "' + name + '"')
+    return "\n".join(lines) + "\n"
+</code></pre>
+<p>With the lines <code>Device</code> and <code>Link</code> in <code>data/schema.txt</code>, the module <code>schema</code>
+has the classes <code>SDevice</code> and <code>SLink</code>. A module of the project imports
+<code>schema</code> and uses the class <code>SDevice</code>:</p>
+<pre><code class="language-python">import schema
+
+actor main(env):
+    proc def __startup__():
+        print(schema.SDevice().kind)
+        env.exit(0)
+</code></pre>
+<p>The first parameter is a dictionary from the path of each input file to a
+description of the file, an <code>InputFile</code> of the module <code>std.build.derive</code>.
+A path is relative to the project root, with <code>/</code> between the components,
+and the dictionary holds the paths in sorted order. The result is the
+source of the module.</p>
+<p>Write the type of the first parameter, <code>dict[str, derive.InputFile]</code>.
+Without it the compiler infers a type from the body of the function. For
+a function that calls <code>read()</code> the inferred type does not fit, and the
+build stops at the call.</p>
+<p>A description has three attributes and one method:</p>
+<ul>
+<li><code>path</code> is the path of the file, as in the dictionary.</li>
+<li><code>size</code> is the size of the content in bytes.</li>
+<li><code>sha256</code> is the SHA-256 of the content, as 64 lowercase hexadecimal
+digits.</li>
+<li><code>read()</code> returns the content as <code>bytes</code>. The text of a file is
+<code>read().decode()</code>.</li>
+</ul>
+<p>A description holds no content. The function reads a file when it calls
+<code>read()</code>, and a function that works from the paths, the sizes and the
+SHA-256 values alone reads no file. <code>read()</code> raises <code>ValueError</code> when the
+content of the file is not the content that the description is of, which
+is so when the file changed while the function ran.</p>
+<p>The other parameters take the arguments of the entry, by name: <code>prefix</code>
+gets <code>"S"</code>. A parameter with a default value needs no argument. The build
+calls the function as</p>
+<pre><code class="language-python">gen.schema(inputs, prefix="S")
+</code></pre>
+<p>and the compiler checks that call. A build stops when an argument has
+another type than its parameter, when an argument has no parameter, or
+when a parameter without a default value has no argument.</p>
+<p>The function gets no <code>Env</code>, so it cannot connect to a host or start a
+process, and the input files are the only files that it can read. It can
+create actors and call them, and they get no <code>Env</code> either. Everything the
+function reads comes from its arguments and from the modules it imports.
+That is how the build knows when the function has to run again. The
+section <a href="#in-a-build">In a build</a> lists the cases.</p>
+<p>The module of the function can import modules of the standard library,
+modules of a dependency, and modules of the project that have a file under
+<code>src/</code>. A module of a dependency can be a derived module of that
+dependency. A build stops when the module of the function imports a
+derived module of the project, directly or through other modules.</p>
+<p>A library that <code>libraries</code> in <code>Build.act</code> declares is compiled as a whole:
+when it holds the module of the function, or a module that this module
+imports, a build compiles every module of the library before the function
+runs. Keep the derived modules of the project, and the modules that import
+them, out of such a library. Otherwise a derived module is compiled as the
+last build left it, before the function runs, and the build stops when its
+source is missing or has an error.</p>
+<p>A function reports an error by raising an exception. The build then stops
+and shows the exception. With <code>raise ValueError("data/schema.txt is empty")</code>
+in the function <code>gen.schema</code>, the message is:</p>
+<pre><code class="language-console">The function gen.schema of the entry schema of derived_modules in /home/user/app/Build.act failed:
+ValueError: data/schema.txt is empty
+</code></pre>
+<p>What the function printed before the exception is shown after the first
+line of this message. When the function returns without an exception, what
+it printed is not shown.</p>
+<h2 id="a-test-of-the-function"><a class="header" href="#a-test-of-the-function">A test of the function</a></h2>
+<p>A test calls the function with descriptions of content that the test makes
+up. <code>derive.input_of</code> takes a path and the content, and returns the
+description of a file with that path and that content. No file is read.
+The test module <code>src/test_gen.act</code> tests the function <code>gen.schema</code>:</p>
+<pre><code class="language-python">import std.build.derive as derive
+import testing
+
+import gen
+
+def _test_schema():
+    inputs = {"data/schema.txt": derive.input_of("data/schema.txt", b"Device\nLink\n")}
+    source = gen.schema(inputs, prefix="S")
+    testing.assertIn("class SLink(object):", source)
+</code></pre>
+<h2 id="several-modules-from-one-function"><a class="header" href="#several-modules-from-one-function">Several modules from one function</a></h2>
+<p>A function can return several modules. It then returns a dictionary from
+module name to source. Its entry in <code>Build.act</code> names every one of these
+modules: to the left of the colon it has their names in braces, with
+commas between them. The names can be written on one line or on several.
+A command that writes <code>Build.act</code>, such as <code>acton pkg add</code>, writes them
+as below: one name per line, in sorted order.</p>
+<p>In <code>Build.act</code>:</p>
+<pre><code class="language-python">derived_modules = {
+    {
+        layers.base,
+        layers.top,
+        tables
+    }: (
+        function=gen.modules,
+        inputs=["data/layers/"]
+    )
+}
+</code></pre>
+<p>The function, in <code>src/gen.act</code>:</p>
+<pre><code class="language-python">import std.build.derive as derive
+
+def modules(inputs: dict[str, derive.InputFile]) -&gt; dict[str, str]:
+    res = {"tables": "names = []\n"}
+    for path, f in inputs.items():
+        name = path.split("/")[-1].split(".")[0]
+        res["layers." + name] = "size = " + str(f.size) + "\n"
+    return res
+</code></pre>
+<p>With <code>base.txt</code> and <code>top.txt</code> as the only files below <code>data/layers/</code>, the
+function returns the modules <code>tables</code>, <code>layers.base</code> and <code>layers.top</code>. It
+takes the size of each file from the description and reads no file.</p>
+<p>A module name stands for one module, and not for the modules below it. A
+build stops when the function returns a module that its entry does not
+name, or does not return a module that its entry names. The message lists
+those modules. With a file <code>data/layers/extra.txt</code> in place of
+<code>data/layers/top.txt</code>, the message is:</p>
+<pre><code class="language-console">The function gen.modules of the entry layers.base of derived_modules in /home/user/app/Build.act returned other modules than the entry names.
+Returned and not named: layers.extra
+Named and not returned: layers.top
+The function returns every module that its entry names with a module name, and no module that its entry does not name. Change the names of the entry or the function.
+</code></pre>
+<p>The message calls the entry <code>the entry layers.base of derived_modules</code>.
+Where a message of the build says <code>the entry</code>, one name and
+<code>of derived_modules</code>, the name is the first of the names of the entry in
+sorted order.</p>
+<p>The order of the names has no meaning. A name that is written twice is an
+error.</p>
+<p>A function whose result type is <code>str</code> has an entry with one name, a module
+name. A function for any other entry has the result type <code>dict[str, str]</code>.</p>
+<p>Two names are an error when they differ only in the case of letters, or
+start with names that do: <code>Foo</code> and <code>foo</code>, or <code>Layers.base</code> and
+<code>layers.top</code>, which start with <code>Layers</code> and <code>layers</code>. This holds in the
+table and among the modules that a function returns: a file system that
+ignores the case of letters has one file or directory for two such names.</p>
+<h2 id="every-module-below-a-name"><a class="header" href="#every-module-below-a-name">Every module below a name</a></h2>
+<p>The modules that a function returns can follow from its input files: one
+module for each file of a directory, or three for each layer of a model.
+<code>Build.act</code> cannot list such modules by name. For them, a name of an entry
+can end with <code>.*</code>.</p>
+<p><code>layers.*</code> stands for every module below <code>layers</code>. A module is below
+<code>layers</code> when its name starts with <code>layers.</code>: <code>layers.base</code> is below
+<code>layers</code>, and so is <code>layers.core.types</code>. These are the modules whose files
+would be in <code>src/layers/</code> or in a directory below it. <code>layers.*</code> does not
+stand for the module <code>layers</code> itself, the module that <code>src/layers.act</code>
+would be.</p>
+<p>In <code>Build.act</code>:</p>
+<pre><code class="language-python">derived_modules = {
+    {
+        layers.*,
+        tables
+    }: (
+        function=gen.modules,
+        inputs=["data/"]
+    )
+}
+</code></pre>
+<p>The function is <code>gen.modules</code> of the section above. With the files
+<code>data/base.txt</code> and <code>data/top.txt</code> it returns the modules <code>tables</code>,
+<code>layers.base</code> and <code>layers.top</code>. When the file <code>data/edge.txt</code> is added, it
+also returns <code>layers.edge</code>, and <code>Build.act</code> stays as it is. When
+<code>data/top.txt</code> is removed, the module <code>layers.top</code> is removed.</p>
+<p>An entry with one such name is written without braces. In <code>Build.act</code>:</p>
+<pre><code class="language-python">derived_modules = {
+    layers.*: (
+        function=gen.layers,
+        inputs=["data/"]
+    )
+}
+</code></pre>
+<p>The function, in <code>src/gen.act</code>:</p>
+<pre><code class="language-python">import std.build.derive as derive
+
+def layers(inputs: dict[str, derive.InputFile]) -&gt; dict[str, str]:
+    res = {}
+    for path, f in inputs.items():
+        name = path.split("/")[-1].split(".")[0]
+        res["layers." + name] = "size = " + str(f.size) + "\n"
+    return res
+</code></pre>
+<p>For a name that ends with <code>.*</code>:</p>
+<ul>
+<li>The function returns any number of modules below <code>layers</code>, also none. A
+module that it returned in the last build and does not return in this
+build is removed.</li>
+<li>The function still returns every module that its entry names with a
+module name, <code>tables</code> above, and no module that its entry does not name.
+Otherwise the build stops with the message of the section above. Write a
+module name for a module that the function always returns: the build
+then checks that it is returned.</li>
+<li>The result type of the function is <code>dict[str, str]</code>.</li>
+<li>Every module below <code>layers</code> is a derived module. The project has no
+<code>.act</code> file under <code>src/layers/</code>, and a build that finds one stops before
+it runs the function of any entry of the project.</li>
+<li><code>src/layers.act</code> can be a file that is written by hand, since <code>layers.*</code>
+does not stand for the module <code>layers</code>. For a function that returns the
+module <code>layers</code> too, write both names, <code>layers</code> and <code>layers.*</code>.</li>
+<li>No module is named twice in the table, in one entry or in two.
+<code>layers.*</code> and <code>layers.base</code> name the module <code>layers.base</code> twice.
+<code>layers.*</code> and <code>layers.core.*</code> name the modules below <code>layers.core</code>
+twice.</li>
+<li><code>.*</code> is written once, at the end of a name and without quotes.
+<code>layers.*.types</code> and <code>layers.b*</code> are not names.</li>
+<li><code>.*</code> is read only in a name to the left of the colon. A path in <code>inputs</code>
+is taken as it is written, and a <code>*</code> in it is not a pattern.</li>
+</ul>
+<p>The modules that the function returned in the last build are the <code>.act</code>
+files under <code>out/derived/src/layers/</code>. A build removes a <code>.act</code> file there
+that the function did not return.</p>
+<h2 id="the-files-of-a-directory"><a class="header" href="#the-files-of-a-directory">The files of a directory</a></h2>
+<p>The standard library has a function for an entry that embeds the files of a
+directory: <code>embed_files</code> of the module <code>std.build.derive</code>. The module that
+it returns has one name, <code>files</code>, a <code>dict[str, bytes]</code> with the content of
+each input file by the path of the file. This entry makes the module
+<code>assets</code> from the files below <code>web/</code>:</p>
+<pre><code class="language-python">derived_modules = {
+    assets: (function=std.build.derive.embed_files, inputs=["web/"],
+             args=(strip="web"))
+}
+</code></pre>
+<p>A module of the project imports <code>assets</code>, and <code>assets.files["/index.html"]</code>
+is the content of the file <code>web/index.html</code>. <code>strip</code> is a prefix that is
+left out of each key of <code>files</code>. Without <code>strip</code> the key is
+<code>web/index.html</code>. The result type of <code>embed_files</code> is <code>str</code>, so the name
+of its entry is a module name, and not a name that ends with <code>.*</code>.</p>
+<p>The source that <code>embed_files</code> returns has one <a href="embedding.html"><code>embed</code></a>
+expression for each input file and no content, so the function reads no
+file. What a build does depends on what changed below <code>web/</code>:</p>
+<ul>
+<li>A file has new content: the build calls the function, since an input file
+changed. The function returns the same source, and the build writes no
+module. It compiles <code>assets</code> again because a file that the module embeds
+has new content.</li>
+<li>A file is added or removed: the function returns other source. The build
+writes the module and compiles it.</li>
+</ul>
+<p>The section
+<a href="embedding.html#the-files-of-a-directory">The files of a directory</a> of the
+page on <code>embed</code> shows the source of the module and says for which files a
+build stops. It also shows a function of a project that returns another
+module for the same files, with <code>embed_call</code> and <code>str_literal</code> of
+<code>std.build.derive</code>.</p>
+<h2 id="in-a-build"><a class="header" href="#in-a-build">In a build</a></h2>
+<p><code>acton build</code>, <code>acton test</code> and a build of a single file bring the derived
+modules up to date before they compile the project. The derived modules of
+a dependency are brought up to date in the same build, before those of the
+project that depends on it. While another build holds the compiler lock of
+the dependency, the build prints <code>Waiting for compiler lock in</code> and the
+directory of the dependency, and waits.</p>
+<p>The source of a derived module is written to <code>out/derived/src/</code>, at the
+path that the module would have under <code>src/</code>: <code>out/derived/src/schema.act</code>
+for the module <code>schema</code>. Do not commit this file, and do not edit it: a
+build that finds the file edited runs the function and writes the file
+again. An error in a derived module points to this file, and a note after
+the error names the function that returned the source. A build removes
+every file under <code>out/derived/src/</code> that no entry names, except a <code>--tydb</code>
+copy, and the source file of a module below a name that ends with <code>.*</code>
+that the function did not return. With the source file of a module, it
+removes what was compiled from the module and the <code>--tydb</code> copy of the
+module.</p>
+<p>The derived modules of an entry are out of date when the function has not
+run for the entry yet, or when one of these changed since the function last
+ran:</p>
+<ul>
+<li>an input file: its content changed, or a file was added or removed below
+an input path that names a directory. This holds for every input file,
+also for one that the function does not read: its description holds the
+SHA-256 of its content,</li>
+<li>the entry in <code>Build.act</code>: its names, its function, its input paths or
+its arguments,</li>
+<li>the function, or anything that the function uses, in any module,</li>
+<li>the compiler version,</li>
+<li>the file of one of these modules under <code>out/derived/src/</code>: it was edited
+or removed, or a file was added for a module below a name that ends with
+<code>.*</code>.</li>
+</ul>
+<p>A change to other code leaves the modules up to date, even code in the
+function's own module: another function, a constant that the function does
+not read, or a comment. With <code>--verbose</code>, a build says for each entry
+whether it is up to date, and the reason when it is not.</p>
+<p>A build keeps a record of each entry, with the SHA-256 of the content of
+each input file, and metadata of the file such as its size and its
+modification time. To tell whether an input file changed, a later build
+first compares the metadata. When the metadata is the same and the file
+was last modified before the record was written, the build takes the file
+as unchanged and does not read it, whatever its size. Otherwise the build
+reads the file and compares the SHA-256, so a file that was written again
+with the same content does not run the function. The build then records
+the new metadata, so that a later build does not read the file again. The
+description of an input file holds this size and this SHA-256, and the
+function reads the file only when it calls <code>read()</code>.</p>
+<p>A build stops when an input file changes while the build runs:</p>
+<pre><code class="language-console">data/schema.txt changed while the build ran. Run the build again
+</code></pre>
+<p>The build looks at each input file before it runs the function and again
+when the function has returned. A file that is not the same file both
+times stops the build before a module of the entry is written. So a
+module is never made from one version of a file and recorded with
+another. A function that reads the changed file stops earlier, with the
+<code>ValueError</code> of <code>read()</code>.</p>
+<p>A line in the build log shows each function that ran:</p>
+<pre><code class="language-console">   schema  Derived by gen.schema                                                   0.412 s
+</code></pre>
+<p>The line of an entry starts with the first of its names in sorted order.
+When the entry is not one module name, the line gives the number of
+modules that the function returned:</p>
+<pre><code class="language-console">   layers.*  Derived 3 modules by gen.modules                                        0.398 s
+</code></pre>
+<p>To call the function of an entry, a build writes a program under
+<code>out/derived/runner/</code> and builds it. A later build runs the program
+without building it again when only an input file changed. It builds the
+program again when the function, anything that the function uses, an
+argument of the entry or the compiler version changed. The time on the
+line of an entry is the time to run the program. In a build that built
+the program, it is the time to build the program and to run it.</p>
+<p><code>acton build --watch</code> and <code>acton test --watch</code> also build when an input
+file is saved, added or removed: a file that <code>inputs</code> names, or a file
+below a directory in <code>inputs</code> that the directory stands for. They watch
+the input paths of the project and of its local dependencies, and read
+them from the <code>Build.act</code> files again when a <code>Build.act</code> changes. A file
+that no input path stands for, such as <code>web/.DS_Store</code>, starts no build.
+A change of an input file starts a build of the whole project, and
+<code>acton test --watch</code> then runs every selected test whose cached result no
+longer applies. After a build that a saved source file started,
+<code>acton test --watch</code> runs the tests of the modules that changed and of the
+modules that import them, directly or through other modules. A derived
+module is among the modules that changed when its source is not the
+source that the tests last ran with.</p>
+<p><code>acton build --skip-build</code> and <code>acton test list</code> run no function: they use
+the derived modules when they are up to date and fail otherwise.</p>
+<p><code>acton sig</code> runs no function and does not look at the input files. It
+shows a derived module as the last build wrote it, and it does not know a
+derived module that no build has written.</p>
+<p>The language server runs no function either. It reads a derived module as
+the last build wrote it.</p>
+<p><code>acton test</code> looks for tests in the modules that have a file under <code>src/</code>.
+It does not list or run a test that is in a derived module.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../compilation/embedding.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../package_management.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../compilation/embedding.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../package_management.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/tabs.js"></script>
+        <script src="../theme/sbscode_copy.js"></script>
+        <script src="../theme/acton-theme.js"></script>
+        <script src="../theme/detail-toggles.js"></script>
+        <script src="../theme/guide-links.js"></script>
+
+
+    </div>
+    </body>
+</html>
